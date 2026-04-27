@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EXPLORADOR PRO | Movistar Prosegur Alarmas</title>
+    
+    <!-- CSS & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css?v=1.1">
+    <style>
+        .hidden { display: none !important; }
+    </style>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div id="login-screen" class="auth-container active">
+        <div class="auth-card">
+            <div class="logo-area">
+                <img src="logo.png" alt="Prosegur" class="brand-logo-main">
+                <h1>EXPLORADOR <span class="accent-text">PRO</span></h1>
+                <p style="font-size: 0.6rem; opacity: 0.6; margin-top: 0.5rem; letter-spacing: 2px;">ACCESO COMERCIAL PROFESIONAL</p>
+            </div>
+            
+            <div id="login-fields" class="auth-fields hidden">
+                <div class="login-minimal-group">
+                    <input type="email" id="log-name" placeholder="EMAIL CORPORATIVO">
+                    <input type="password" id="log-pass" placeholder="CONTRASEÑA">
+                </div>
+                
+                <button id="login-btn" class="btn btn-primary btn-giant">ENTRAR AL SISTEMA</button>
+                
+                <div class="auth-footer-links">
+                    <button id="show-reg-btn" class="link-btn">REGISTRARSE</button>
+                    <button id="forgot-pw-btn" class="link-btn-dim">He olvidado mi contraseña</button>
+                </div>
+            </div>
+
+            <div id="reg-fields" class="auth-fields">
+                <div class="login-minimal-group">
+                    <input type="email" id="reg-name" placeholder="EMAIL CORPORATIVO">
+                    <input type="password" id="reg-pass" placeholder="CONTRASEÑA">
+                </div>
+                <button id="reg-btn" class="btn btn-primary btn-giant">REGISTRARSE</button>
+                <div style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
+                    <p>¿YA TIENES CUENTA? <a href="#" id="show-login" style="color: var(--primary-yellow); font-weight: 800; text-decoration: none;">INICIAR SESIÓN</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="dashboard-screen" class="app-container" style="display: none;">
+        <!-- Navbar -->
+        <header class="navbar">
+            <div class="nav-left">
+                <img src="logo.png" alt="Logo" class="nav-logo-img">
+                <div class="nav-titles" style="margin-left: 10px;">
+                    <span class="brand-name">EXPLORADOR <span style="color: var(--primary-yellow)">PRO</span></span>
+                    <span class="app-tag">MOVISTAR PROSEGUR ALARMAS</span>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <div class="nav-actions-group">
+                    <button id="export-excel-btn" type="button" class="nav-btn-text btn-excel" title="Exportar Excel">
+                        <i data-lucide="file-spreadsheet"></i>
+                        <span class="btn-label">EXCEL</span>
+                    </button>
+                    <button id="export-airtable-btn" type="button" class="nav-btn-text btn-airtable" title="Sincronizar Airtable">
+                        <i data-lucide="database"></i>
+                        <span class="btn-label">AIRTABLE</span>
+                    </button>
+                    <button id="nav-delete-btn" type="button" class="nav-btn-text btn-delete" title="Borrar Registros">
+                        <i data-lucide="trash-2"></i>
+                        <span class="btn-label">BORRAR</span>
+                    </button>
+                    
+                    <div class="profile-badge" id="user-display">
+                        <span id="display-name">USUARIO</span>
+                        <i data-lucide="chevron-down" style="width: 14px; opacity: 0.6;"></i>
+                        
+                        <div id="user-dropdown" class="dropdown-content">
+                            <div style="font-size: 0.6rem; font-weight: 900; color: var(--primary-yellow); margin-bottom: 0.5rem; opacity: 0.5;">MI PERFIL</div>
+                            <button id="open-config"><i data-lucide="settings"></i> Ajustes</button>
+                            <hr style="margin: 0.5rem 0; opacity: 0.1;">
+                            <button id="logout-btn" style="color: var(--danger);"><i data-lucide="log-out"></i> Salir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="main-tabs">
+            <button class="tab-link active" data-tab="stats"><i data-lucide="layout-dashboard"></i> RESUMEN</button>
+            <button class="tab-link" data-tab="discovery"><i data-lucide="target"></i> EXPLORACIÓN</button>
+            <button class="tab-link" data-tab="map-history"><i data-lucide="map"></i> MAPA</button>
+            <button class="tab-link" data-tab="leads-list"><i data-lucide="list"></i> HISTORIAL</button>
+        </nav>
+
+        <div id="dropdown-backdrop" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.2);"></div>
+
+        <!-- Content Area -->
+        <main class="main-content">
+            
+            <!-- Tab 1: Dashboard Stats -->
+            <section id="stats-tab" class="tab-pane active">
+                <div class="glass-card">
+                    <h2 style="margin-bottom: 0.5rem;">Panel de Actividad</h2>
+                    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.5rem;">Resumen de tu gestión comercial actual.</p>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-val" id="stat-total">0</span>
+                            <span class="stat-label">Prospectos</span>
+                        </div>
+                        <div class="stat-box highlight">
+                            <span class="stat-val" id="stat-high" style="color: var(--primary-yellow);">0</span>
+                            <span class="stat-label">Interés Alto</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="stat-seguimiento" style="color: #60a5fa;">0</span>
+                            <span class="stat-label">Seguimientos</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="stat-visita" style="color: #fb923c;">0</span>
+                            <span class="stat-label">Visitas Pend.</span>
+                        </div>
+                        <div class="stat-box success">
+                            <span class="stat-val" id="stat-firmado" style="color: var(--success);">0</span>
+                            <span class="stat-label">Firmados</span>
+                        </div>
+                        <div class="stat-box danger">
+                            <span class="stat-val" id="stat-descartado" style="color: var(--danger);">0</span>
+                            <span class="stat-label">Rechazados</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Discovery Section -->
+            <section id="discovery-tab" class="tab-pane">
+                <div class="exploration-header">
+                    <div class="header-main">
+                        <div>
+                            <h2 style="letter-spacing: 2px; font-weight: 900;">CENTRO DE EXPLORACIÓN</h2>
+                            <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 1px;">Detectando oportunidades de negocio en tiempo real</p>
+                        </div>
+                        <button id="geo-btn" class="btn btn-primary btn-radar">
+                            <div class="radar-ping"></div>
+                            <i data-lucide="scan"></i> <span>ACTUALIZAR ZONA</span>
+                        </button>
+                    </div>
+
+                    <div class="exploration-filters-bar">
+                        <div class="search-box-premium">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="lead-search-input" placeholder="Buscar por nombre, calle o CIF...">
+                        </div>
+                        
+                        <div class="filter-group-horizontal">
+                            <div class="filter-select-wrapper">
+                                <label>RADIO</label>
+                                <select id="radius-select">
+                                    <option value="500">500M</option>
+                                    <option value="1000" selected>1KM</option>
+                                    <option value="2000">2KM</option>
+                                    <option value="5000">5KM</option>
+                                </select>
+                            </div>
+                            <div class="filter-select-wrapper">
+                                <label>SECTOR</label>
+                                <select id="sector-filter">
+                                    <option value="all">TODOS</option>
+                                    <option value="Restaurante">RESTAURACIÓN</option>
+                                    <option value="Farmacia">FARMACIA</option>
+                                    <option value="Gym">DEPORTES</option>
+                                    <option value="Moda">RETAIL</option>
+                                    <option value="Clínica">CLÍNICAS</option>
+                                </select>
+                            </div>
+                            <div class="filter-select-wrapper">
+                                <label>ESTADO</label>
+                                <select id="status-filter">
+                                    <option value="all">TODOS</option>
+                                    <option value="visita">VISITAS</option>
+                                    <option value="seguimiento">SEGUIMIENTOS</option>
+                                    <option value="descartado">RECHAZADOS</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="exploration-results" class="exploration-content">
+                    <!-- Empty State Moderno -->
+                    <div id="empty-state" class="empty-exploration-state">
+                        <div class="radar-container">
+                            <div class="radar-line"></div>
+                            <div class="radar-circle"></div>
+                            <div class="radar-circle"></div>
+                            <!-- Simulated detection points -->
+                            <div class="radar-point" style="top: 20%; left: 30%; animation-delay: 0.5s;"></div>
+                            <div class="radar-point" style="top: 60%; left: 70%; animation-delay: 1.2s;"></div>
+                            <div class="radar-point" style="top: 40%; left: 80%; animation-delay: 2.1s;"></div>
+                        </div>
+                        <h3 style="color: white; opacity: 0.8;">ESCANER TÁCTICO LISTO</h3>
+                        <p style="max-width: 300px; margin: 1rem auto; line-height: 1.6;">Inicia el reconocimiento de zona para detectar oportunidades de negocio en tiempo real.</p>
+                    </div>
+
+                    <div id="leads-container" class="leads-grid-premium"></div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Interactive Map -->
+            <section id="map-history-tab" class="tab-pane">
+                <div class="map-controls-top">
+                    <button id="reset-map-btn" class="btn-glass"><i data-lucide="refresh-cw"></i> REUBICAR GPS</button>
+                    <button id="force-gps-btn" class="btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow);"><i data-lucide="zap"></i> FORZAR</button>
+                </div>
+                
+                <div class="map-frame">
+                    <div id="map"></div>
+                    <div class="map-overlay-controls">
+                        <button id="toggle-manual-btn" class="btn-map-control" title="Activar/Desactivar Modo Manual">
+                            <i data-lucide="mouse-pointer-2"></i> <span>MANUAL: OFF</span>
+                        </button>
+                        <button id="add-manual-lead-btn" class="btn-map-control" title="Añadir local aquí">
+                            <i data-lucide="plus-circle"></i> <span>AÑADIR LOCAL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 1.5rem; border: 1px solid var(--border);">
+                    <p style="font-size: 0.7rem; color: var(--text-muted); text-align: center; font-weight: 700;">GESTIÓN TERRITORIAL EN TIEMPO REAL</p>
+                </div>
+            </section>
+
+            <!-- Tab 4: Leads History List -->
+            <section id="leads-list-tab" class="tab-pane">
+                <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                        <h2 style="font-size: 1.2rem;">HISTORIAL DE GESTIONES</h2>
+                        <select id="history-status-filter" class="tag-select" style="max-width: 200px;">
+                            <option value="all">TODOS LOS ESTADOS</option>
+                            <option value="visita">SOLO VISITAS</option>
+                            <option value="seguimiento">SEGUIMIENTOS</option>
+                            <option value="descartado">DESCARTADOS</option>
+                            <option value="firmado">FIRMADOS</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="leads-grid" class="leads-layout"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Config Modal -->
+    <div id="config-modal" class="modal">
+        <div class="modal-card mini profile-modal-card">
+            <span class="modal-close" id="close-config-modal">&times;</span>
+            
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="trigger-avatar-upload" style="cursor: pointer; position: relative;" title="Haz clic para cambiar tu foto">
+                    <div id="avatar-preview-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden;">
+                        <i data-lucide="user" id="default-avatar-icon"></i>
+                        <img id="user-avatar-img" src="" class="hidden" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="avatar-edit-badge"><i data-lucide="camera" style="width: 12px; height: 12px;"></i></div>
+                </div>
+                <input type="file" id="user-avatar-input" accept="image/*" class="hidden">
+                <h2 style="color: var(--primary-yellow); margin: 1rem 0 0.2rem 0; font-size: 1.5rem;">Ajustes de Perfil</h2>
+                <p style="font-size: 0.8rem; opacity: 0.5;">Gestiona tu identidad y conexiones</p>
+            </div>
+
+            <div class="modal-body" style="margin-top: 2rem;">
+                <div class="profile-section">
+                    <div class="section-title"><i data-lucide="contact" style="width: 14px;"></i> INFORMACIÓN PERSONAL</div>
+                    <div class="input-group" style="margin-bottom: 1.2rem;">
+                        <label>Email Corporativo</label>
+                        <input type="email" id="user-email-display" readonly style="opacity: 0.6; cursor: not-allowed; background: rgba(255,255,255,0.02);">
+                    </div>
+                    <div class="input-group">
+                        <label>Teléfono de Contacto</label>
+                        <input type="text" id="user-phone" placeholder="+34 600 000 000">
+                    </div>
+                </div>
+
+                <div class="profile-section" style="margin-top: 2.5rem;">
+                    <div class="section-title"><i data-lucide="shield-check" style="width: 14px;"></i> SEGURIDAD Y BACKUP</div>
+                    <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Descarga una copia de seguridad local con todos tus datos y fotos. Útil para restaurar si cambias de equipo o navegador.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <button id="download-backup-btn" class="btn btn-card-action" style="background: rgba(255,255,255,0.05); padding: 0.8rem; border: 1px solid var(--border);">
+                            <i data-lucide="download"></i> COPIA SEGURIDAD
+                        </button>
+                        <button id="restore-backup-btn" class="btn btn-card-action" style="background: rgba(255,255,255,0.05); padding: 0.8rem; border: 1px solid var(--border);">
+                            <i data-lucide="upload"></i> RESTAURAR COPIA
+                        </button>
+                        <input type="file" id="import-backup-input" accept=".json" class="hidden">
+                    </div>
+                </div>
+                <div class="profile-section" style="margin-top: 2.5rem;">
+                    <div class="section-title"><i data-lucide="database" style="width: 14px;"></i> CONEXIÓN AIRTABLE</div>
+                    <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Configura la sincronización con tu base de datos externa para copias de seguridad automáticas.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group">
+                            <label>Base ID</label>
+                            <input type="text" id="air-base" placeholder="appXXXXXXXX">
+                        </div>
+                        <div class="input-group">
+                            <label>Token Secreto</label>
+                            <input type="password" id="air-token" placeholder="patXXXXXXXX">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                    <button id="save-config-btn" class="btn btn-primary btn-full" style="padding: 1.2rem; font-size: 0.9rem;"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.6rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px;">Versión Explorador Pro 2026.04</p>
+                        <p style="font-size: 0.5rem; opacity: 0.2; margin-top: 0.4rem;">MOVISTAR PROSEGUR ALARMAS - AGENTE EXCLUSIVO</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-card full">
+            <span class="modal-close" id="close-modal">&times;</span>
+            <div class="modal-header-lead" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                <input type="text" id="modal-title-input" style="font-size: 1.6rem; font-weight: 800; border: none; background: none; color: var(--primary-yellow); width: 80%;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span id="modal-status-badge" class="badge-status">ESTADO</span>
+                    <span id="modal-interest-badge" class="badge-interest" style="position: static; font-size: 1rem;">--%</span>
+                </div>
+            </div>
+            
+            <div class="modal-layout" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+                <div class="modal-main-info">
+                    <div class="info-section">
+                        <h4>DATOS CORPORATIVOS</h4>
+                        <input type="text" id="modal-full-address" placeholder="Dirección completa" style="margin-bottom: 0.5rem; width: 100%;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                            <input type="text" id="modal-phone" placeholder="Teléfono">
+                            <input type="text" id="modal-email" placeholder="Email Contacto">
+                        </div>
+                    </div>
+                    <div class="info-section" style="margin-top: 1.5rem;">
+                        <h4>IDENTIFICACIÓN FISCAL</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                            <input type="text" id="modal-cif" placeholder="CIF / NIF">
+                            <input type="text" id="modal-contact-name" placeholder="Persona de contacto">
+                        </div>
+                    </div>
+                    <div class="info-section" style="margin-top: 1.5rem;">
+                        <h4>ANÁLISIS DE SERVICIOS EN COMPETENCIA</h4>
+                        <textarea id="modal-services" rows="4" style="width: 100%; padding: 1rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); color: white; font-weight: 600;"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-sidebar" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 2rem;">
+                    <div class="status-picker">
+                        <h4>DEFINIR ESTADO DE GESTIÓN</h4>
+                        <div class="grid-2-buttons">
+                            <button class="status-btn-pick visita" data-status="visita">VISITA PEND.</button>
+                            <button class="status-btn-pick seguimiento" data-status="seguimiento">SEGUIMIENTO</button>
+                            <button class="status-btn-pick descartado" data-status="descartado">DESCARDADO</button>
+                            <button class="status-btn-pick firmado" data-status="firmado">FIRMADO</button>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <a id="modal-maps-link" href="#" target="_blank" class="btn" style="background: #4285F4; color: white;"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
+                        <button id="save-lead-btn" class="btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.3; font-weight: 700;">
+                        Último cambio: <span id="modal-updated">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="delete-history-modal" class="modal">
+        <div class="modal-card mini" style="text-align: center;">
+            <div style="padding: 1rem; color: var(--danger); font-size: 2.5rem;"><i data-lucide="alert-triangle"></i></div>
+            <h2 style="margin-bottom: 0.5rem;">Limpiar Registros</h2>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 1.5rem;">Selecciona el periodo a eliminar de tu base de datos local.</p>
+            <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 1.2rem; margin-bottom: 1.5rem;">
+                <label style="cursor: pointer; font-weight: 800;"><input type="radio" name="delete-period" value="today" checked> GESTIONES DE HOY</label>
+                <label style="cursor: pointer; font-weight: 800;"><input type="radio" name="delete-period" value="week"> ESTA SEMANA</label>
+                <label style="cursor: pointer; font-weight: 800; color: var(--danger);"><input type="radio" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
+            </div>
+            <div style="display: flex; gap: 0.8rem;">
+                <button id="cancel-delete-btn" class="btn btn-full" style="background: rgba(255,255,255,0.05);">CANCELAR</button>
+                <button id="confirm-delete-btn" class="btn btn-full" style="background: var(--danger); color: white;">BORRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-card mini" style="text-align: center;">
+            <div id="forgot-init-state">
+                <div style="padding: 1rem; color: var(--primary-yellow); font-size: 2.5rem;"><i data-lucide="shield-alert"></i></div>
+                <h2 style="margin-bottom: 1rem; color: var(--primary-yellow);">Recuperación de Clave</h2>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Introduce tu email corporativo para recibir un enlace de restauración.
+                </p>
+                <div class="login-minimal-group" style="margin-bottom: 1.5rem;">
+                    <input type="email" id="forgot-email" placeholder="tu-email@prosegur.com" style="font-size: 1rem; padding: 1rem;">
+                </div>
+                <button id="send-reset-btn" class="btn btn-primary btn-full">ENVIAR ENLACE</button>
+                <button id="close-forgot-modal" class="link-btn-dim" style="margin-top: 1rem; display: block; width: 100%;">VOLVER</button>
+            </div>
+            
+            <div id="forgot-sending-state" class="hidden">
+                <div style="padding: 2rem;">
+                    <div class="loader-ring"></div>
+                    <p style="margin-top: 1.5rem; font-weight: 800; color: var(--primary-yellow);">ENVIANDO ENLACE...</p>
+                    <p style="font-size: 0.8rem; opacity: 0.5;">Verificando servidor de Prosegur</p>
+                </div>
+            </div>
+
+            <div id="forgot-success-state" class="hidden">
+                <div style="padding: 1rem; color: var(--success); font-size: 2.5rem;"><i data-lucide="check-circle"></i></div>
+                <h2 style="margin-bottom: 1rem; color: var(--success);">¡ENVIADO!</h2>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 2rem; line-height: 1.6;">
+                    Hemos enviado un código de acceso a <br><b id="sent-email-display" style="color: white;">---</b>.<br><br>
+                    Revisa tu bandeja de entrada y la carpeta de spam.
+                </p>
+                <button id="forgot-finish-btn" class="btn btn-primary btn-full">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    <script src="app.js?v=1.4"></script>
+    <script>
+        // Inicialización de iconos Lucide tras la carga de la página
+        window.addEventListener('load', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
