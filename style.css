@@ -244,6 +244,43 @@ select {
 .profile-section { background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
 .section-title { font-size: 0.7rem; font-weight: 900; color: var(--primary-yellow); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; letter-spacing: 1px; }
 
+/* Estilos de Input en Modales/Perfil */
+.input-group label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--primary-yellow);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 0.8rem 1rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-yellow);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+input[readonly] {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+
 /* Animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
