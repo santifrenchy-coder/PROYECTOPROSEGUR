@@ -339,7 +339,7 @@
             <div class="modal-header-lead" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
                 <input type="text" id="modal-title-input" style="font-size: 1.6rem; font-weight: 800; border: none; background: none; color: var(--primary-yellow); width: 80%;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span id="modal-status-badge" class="badge-status">ESTADO</span>
+                    <span id="modal-status-badge" class="badge-status-premium">ESTADO</span>
                     <span id="modal-interest-badge" class="badge-interest" style="position: static; font-size: 1rem;">--%</span>
                 </div>
             </div>
@@ -347,23 +347,74 @@
             <div class="modal-layout" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
                 <div class="modal-main-info">
                     <div class="info-section">
-                        <h4>DATOS CORPORATIVOS</h4>
-                        <input type="text" id="modal-full-address" placeholder="Dirección completa" style="margin-bottom: 0.5rem; width: 100%;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                            <input type="text" id="modal-phone" placeholder="Teléfono">
-                            <input type="text" id="modal-email" placeholder="Email Contacto">
+                        <h4>UBICACIÓN Y CONTACTO</h4>
+                        <div class="input-group" style="margin-bottom: 0.8rem;">
+                            <label>Dirección Completa</label>
+                            <input type="text" id="modal-full-address" placeholder="Ej. Calle Mayor 1">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div class="input-group">
+                                <label>C.P.</label>
+                                <input type="text" id="modal-cp" placeholder="Código Postal">
+                            </div>
+                            <div class="input-group">
+                                <label>Población / Ciudad</label>
+                                <input type="text" id="modal-city" placeholder="Ciudad">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div class="input-group">
+                                <label>Teléfono Contacto</label>
+                                <input type="text" id="modal-phone" placeholder="Teléfono">
+                            </div>
+                            <div class="input-group">
+                                <label>Email Contacto</label>
+                                <input type="text" id="modal-email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Persona de Contacto</label>
+                            <input type="text" id="modal-contact-name" placeholder="Nombre de la persona">
                         </div>
                     </div>
+                    
                     <div class="info-section" style="margin-top: 1.5rem;">
-                        <h4>IDENTIFICACIÓN FISCAL</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                            <input type="text" id="modal-cif" placeholder="CIF / NIF">
-                            <input type="text" id="modal-contact-name" placeholder="Persona de contacto">
+                        <h4>IDENTIFICACIÓN FISCAL Y SOCIAL</h4>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div class="input-group">
+                                <label>Razón Social / Nombre Comercial</label>
+                                <input type="text" id="modal-business-name" placeholder="Nombre Oficial">
+                            </div>
+                            <div class="input-group">
+                                <label>CIF / NIF</label>
+                                <input type="text" id="modal-cif" placeholder="CIF / NIF">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Redes Sociales / Sitio Web</label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <i data-lucide="instagram" style="width: 18px; color: var(--text-muted);"></i>
+                                <input type="text" id="modal-rrss" placeholder="@usuario o sitio web">
+                            </div>
                         </div>
                     </div>
+
                     <div class="info-section" style="margin-top: 1.5rem;">
-                        <h4>ANÁLISIS DE SERVICIOS EN COMPETENCIA</h4>
-                        <textarea id="modal-services" rows="4" style="width: 100%; padding: 1rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); color: white; font-weight: 600;"></textarea>
+                        <h4>ANÁLISIS DE COMPETENCIA Y NOTAS</h4>
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.65rem; color: var(--primary-yellow); font-weight: 800; text-transform: uppercase;">Compañía de Alarma Actual</label>
+                            <select id="modal-alarm-company" style="margin-top: 0.2rem; width: 100%; padding: 0.8rem 1rem; border-radius: 1rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: white; font-weight: 600;">
+                                <option value="NINGUNA" style="background: var(--bg-dark);">Ninguna / Desconocida</option>
+                                <option value="PROSEGUR" style="background: var(--bg-dark);">Movistar Prosegur Alarmas</option>
+                                <option value="SECURITAS" style="background: var(--bg-dark);">Securitas Direct</option>
+                                <option value="ADT" style="background: var(--bg-dark);">ADT</option>
+                                <option value="SEGURMA" style="background: var(--bg-dark);">Segurma</option>
+                                <option value="SICOR" style="background: var(--bg-dark);">Sicor</option>
+                                <option value="3D" style="background: var(--bg-dark);">3D</option>
+                                <option value="OTROS" style="background: var(--bg-dark);">Otros Locales / Regionales</option>
+                            </select>
+                        </div>
+                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." style="width: 100%; padding: 1rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); color: white; font-weight: 600;"></textarea>
                     </div>
                 </div>
                 
@@ -373,7 +424,7 @@
                         <div class="grid-2-buttons">
                             <button class="status-btn-pick visita" data-status="visita">VISITA PEND.</button>
                             <button class="status-btn-pick seguimiento" data-status="seguimiento">SEGUIMIENTO</button>
-                            <button class="status-btn-pick descartado" data-status="descartado">DESCARDADO</button>
+                            <button class="status-btn-pick descartado" data-status="descartado">DESCARTADO</button>
                             <button class="status-btn-pick firmado" data-status="firmado">FIRMADO</button>
                         </div>
                     </div>
@@ -446,6 +497,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="app.js?v=1.4"></script>
     <script>
         // Inicialización de iconos Lucide tras la carga de la página

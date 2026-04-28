@@ -82,6 +82,11 @@ const dom = {
     modalCif: document.getElementById('modal-cif'),
     modalContactName: document.getElementById('modal-contact-name'),
     modalServices: document.getElementById('modal-services'),
+    modalCp: document.getElementById('modal-cp'),
+    modalCity: document.getElementById('modal-city'),
+    modalBusinessName: document.getElementById('modal-business-name'),
+    modalRrss: document.getElementById('modal-rrss'),
+    modalAlarmCompany: document.getElementById('modal-alarm-company'),
     statusBtns: document.querySelectorAll('.status-btn-pick'),
     saveLeadBtn: document.getElementById('save-lead-btn'),
     modalUpdated: document.getElementById('modal-updated'),
@@ -598,6 +603,10 @@ async function generateLeads(lat, lng, r) {
             email: tags.email || "No disponible",
             cif: "Pendiente identificar",
             contactName: "Pendiente",
+            cp: tags['addr:postcode'] || "",
+            city: tags['addr:city'] || "",
+            rrss: tags.website || "",
+            alarm: "NINGUNA",
             interest,
             status: 'visita',
             services: "Puntos detectados por satélite: " + Object.keys(tags).length,
@@ -771,6 +780,10 @@ function addNewManualLead(lat, lng) {
         email: "No disponible",
         cif: "Pendiente",
         contactName: "Pendiente",
+        cp: "",
+        city: "",
+        rrss: "",
+        alarm: "NINGUNA",
         interest: 50,
         status: 'visita',
         services: "Local añadido manualmente por el agente en campo.",
@@ -795,13 +808,28 @@ function openLead(lead) {
     dom.modalFullAddress.value = lead.address;
     dom.modalPhone.value = lead.phone;
     dom.modalEmail.value = lead.email;
-    dom.modalCif.value = lead.cif;
-    dom.modalContactName.value = lead.contactName;
-    dom.modalServices.value = lead.services;
+    dom.modalCif.value = lead.cif || "";
+    dom.modalContactName.value = lead.contactName || "";
+    dom.modalServices.value = lead.services || "";
+    if(dom.modalCp) dom.modalCp.value = lead.cp || "";
+    if(dom.modalCity) dom.modalCity.value = lead.city || "";
+    if(dom.modalBusinessName) dom.modalBusinessName.value = lead.name || "";
+    if(dom.modalRrss) dom.modalRrss.value = lead.rrss || "";
+    if(dom.modalAlarmCompany) dom.modalAlarmCompany.value = lead.alarm || "NINGUNA";
     dom.modalUpdated.innerText = lead.lastUpdate;
+    
+    // Color según interés en el modal
+    let interestColor = '#94a3b8';
+    if (lead.interest >= 70) interestColor = '#22c55e';
+    if (lead.interest >= 85) interestColor = 'var(--primary-yellow)';
+    if (lead.interest >= 95) interestColor = '#ef4444';
+    
     dom.modalInterestBadge.innerText = lead.interest + '%';
+    dom.modalInterestBadge.style.color = interestColor;
+    dom.modalInterestBadge.style.borderColor = interestColor + '44'; // 44 es opacidad en hex
+
     dom.modalStatusBadge.innerText = lead.status.toUpperCase();
-    dom.modalStatusBadge.className = 'badge-status ' + lead.status;
+    dom.modalStatusBadge.className = 'badge-status-premium ' + lead.status;
     dom.modalMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name + ' ' + lead.address)}`;
     
     updateStatusUI();
@@ -825,7 +853,7 @@ function updateLeadStatus(status) {
     saveToDisk();
     updateStatusUI();
     dom.modalStatusBadge.innerText = status.toUpperCase();
-    dom.modalStatusBadge.className = 'badge-status ' + status;
+    dom.modalStatusBadge.className = 'badge-status-premium ' + status;
     updateStats();
     renderLeads();
     renderMapPins();
@@ -840,6 +868,10 @@ function saveLeadChanges() {
     currentLead.cif = dom.modalCif.value;
     currentLead.contactName = dom.modalContactName.value;
     currentLead.services = dom.modalServices.value;
+    if(dom.modalCp) currentLead.cp = dom.modalCp.value;
+    if(dom.modalCity) currentLead.city = dom.modalCity.value;
+    if(dom.modalRrss) currentLead.rrss = dom.modalRrss.value;
+    if(dom.modalAlarmCompany) currentLead.alarm = dom.modalAlarmCompany.value;
     currentLead.lastUpdate = new Date().toLocaleString();
     
     const idx = state.leads.findIndex(l => l.id === currentLead.id);
@@ -985,27 +1017,49 @@ function exportToExcel() {
     console.log("Iniciando exportación Excel...", state.leads.length);
     if (state.leads.length === 0) return alert("No hay datos para exportar.");
     
-    let csv = "\uFEFF"; // BOM para Excel (UTF-8)
-    csv += "ID,Negocio,Sector,Direccion,CIF,Contacto,Interes,Estado,Ultimo_Cambio\n";
-    
-    state.leads.forEach(l => {
-        // Limpiar comas y comillas para no romper el CSV
-        const name = l.name.replace(/"/g, '""');
-        const addr = l.address.replace(/"/g, '""');
-        csv += `"${l.id}","${name}","${l.sector}","${addr}","${l.cif}","${l.contactName}","${l.interest}%","${l.status}","${l.lastUpdate}"\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const dateStr = new Date().toISOString().slice(0,10);
-    a.download = `ExploradorPRO_Prospectos_${dateStr}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    alert("Exportación completada. Revisa tu carpeta de descargas para el archivo: " + a.download);
+    // Preparar datos para SheetJS
+    const exportData = state.leads.map(l => ({
+        "ID Sistema": l.id,
+        "Nombre Negocio": l.name,
+        "Sector": l.sector,
+        "Dirección": l.address,
+        "C. Postal": l.cp,
+        "Población": l.city,
+        "CIF / NIF": l.cif,
+        "Persona Contacto": l.contactName,
+        "Teléfono": l.phone,
+        "Email": l.email,
+        "Redes Sociales": l.rrss,
+        "Compañía Alarma": l.alarm,
+        "Potencial (%)": l.interest,
+        "Estado Comercial": l.status.toUpperCase(),
+        "Notas": l.services,
+        "Última Interacción": l.lastUpdate !== '--' ? l.lastUpdate : l.date
+    }));
+
+    try {
+        // Crear hoja de trabajo y libro
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Prospectos");
+        
+        // Ajustar ancho de columnas básico
+        const colWidths = [
+            { wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 40 }, { wch: 15 },
+            { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 20 }
+        ];
+        worksheet['!cols'] = colWidths;
+
+        // Descargar archivo .xlsx
+        const dateStr = new Date().toISOString().slice(0,10);
+        const filename = `ExploradorPRO_Prospectos_${dateStr}.xlsx`;
+        XLSX.writeFile(workbook, filename);
+        
+        alert("Exportación completada. Archivo Excel generado: " + filename);
+    } catch (error) {
+        console.error("Error exportando a Excel:", error);
+        alert("Hubo un error al generar el archivo Excel. Verifica la consola.");
+    }
 }
 
 async function exportToAirtable() {
@@ -1031,12 +1085,17 @@ async function exportToAirtable() {
                     "Nombre": l.name,
                     "Sector": l.sector,
                     "Direccion": l.address,
+                    "CP": l.cp,
+                    "Poblacion": l.city,
                     "CIF": l.cif,
                     "Contacto": l.contactName,
-                    "Interes": l.interest,
-                    "Estado": l.status,
                     "Telefono": l.phone,
                     "Email": l.email,
+                    "RRSS": l.rrss,
+                    "Alarma_Actual": l.alarm,
+                    "Notas": l.services,
+                    "Interes": l.interest,
+                    "Estado": l.status,
                     "Ultima_Actualizacion": l.lastUpdate || l.date
                 }
             }));
