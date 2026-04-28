@@ -25,130 +25,135 @@ let currentLead = null;
 let markersLayer = null;
 
 // --- Mapeo del DOM ---
-const dom = {
-    // Screens
-    loginScreen: document.getElementById('login-screen'),
-    dashboardScreen: document.getElementById('dashboard-screen'),
-    
-    // Auth
-    showLogin: document.getElementById('show-login'),
-    showReg: document.getElementById('show-reg'),
-    loginFields: document.getElementById('login-fields'),
-    regFields: document.getElementById('reg-fields'),
-    loginBtn: document.getElementById('login-btn'),
-    regBtn: document.getElementById('reg-btn'),
-    logName: document.getElementById('log-name'),
-    logPass: document.getElementById('log-pass'),
-    regName: document.getElementById('reg-name'),
-    regPass: document.getElementById('reg-pass'),
-    forgotPw: document.getElementById('forgot-pw-btn'),
+let dom = {};
 
-    // Tabs
-    tabBtns: document.querySelectorAll('.tab-link'),
-    tabPanes: document.querySelectorAll('.tab-pane'),
-    
-    // Navbar & User
-    displayName: document.getElementById('display-name'),
-    userDisplay: document.getElementById('user-display'),
-    userDropdown: document.getElementById('user-dropdown'),
-    dropdownBackdrop: document.getElementById('dropdown-backdrop'),
-    logoutBtn: document.getElementById('logout-btn'),
-    openConfig: document.getElementById('open-config'),
-    
-    // Discovery
-    geoBtn: document.getElementById('geo-btn'),
-    radiusSelect: document.getElementById('radius-select'),
-    sectorFilter: document.getElementById('sector-filter'),
-    searchInput: document.getElementById('lead-search-input'),
-    interestFilter: document.getElementById('interest-filter'),
-    interestVal: document.getElementById('interest-val'),
-    statusFilter: document.getElementById('status-filter'),
-    dateFilter: document.getElementById('date-filter'),
-    emptyState: document.getElementById('empty-state'),
-    leadsContainer: document.getElementById('leads-container'),
-    
-    // Map Tab
-    resetMapBtn: document.getElementById('reset-map-btn'),
-    forceGpsBtn: document.getElementById('force-gps-btn'),
-    leadsGridHistory: document.getElementById('leads-grid'),
-    
-    // Modals
-    modal: document.getElementById('detail-modal'),
-    closeModal: document.getElementById('close-modal'),
-    modalTitleInput: document.getElementById('modal-title-input'),
-    modalFullAddress: document.getElementById('modal-full-address'),
-    modalPhone: document.getElementById('modal-phone'),
-    modalEmail: document.getElementById('modal-email'),
-    modalCif: document.getElementById('modal-cif'),
-    modalContactName: document.getElementById('modal-contact-name'),
-    modalServices: document.getElementById('modal-services'),
-    modalCp: document.getElementById('modal-cp'),
-    modalCity: document.getElementById('modal-city'),
-    modalBusinessName: document.getElementById('modal-business-name'),
-    modalRrss: document.getElementById('modal-rrss'),
-    modalAlarmCompany: document.getElementById('modal-alarm-company'),
-    statusBtns: document.querySelectorAll('.status-btn-pick'),
-    saveLeadBtn: document.getElementById('save-lead-btn'),
-    modalUpdated: document.getElementById('modal-updated'),
-    modalInterestBadge: document.getElementById('modal-interest-badge'),
-    modalStatusBadge: document.getElementById('modal-status-badge'),
-    modalMapsLink: document.getElementById('modal-maps-link'),
+function initDom() {
+    dom = {
+        // Screens
+        loginScreen: document.getElementById('login-screen'),
+        dashboardScreen: document.getElementById('dashboard-screen'),
+        
+        // Auth
+        showLogin: document.getElementById('show-login'),
+        showReg: document.getElementById('show-reg'),
+        loginFields: document.getElementById('login-fields'),
+        regFields: document.getElementById('reg-fields'),
+        loginBtn: document.getElementById('login-btn'),
+        regBtn: document.getElementById('reg-btn'),
+        logName: document.getElementById('log-name'),
+        logPass: document.getElementById('log-pass'),
+        regName: document.getElementById('reg-name'),
+        regPass: document.getElementById('reg-pass'),
+        forgotPw: document.getElementById('forgot-pw-btn'),
 
-    // Config Modal
-    configModal: document.getElementById('config-modal'),
-    closeConfigModal: document.getElementById('close-config-modal'),
-    saveConfigBtn: document.getElementById('save-config-btn'),
-    userPhone: document.getElementById('user-phone'),
-    userEmailDisplay: document.getElementById('user-email-display'),
-    airBase: document.getElementById('air-base'),
-    airToken: document.getElementById('air-token'),
+        // Tabs
+        tabBtns: document.querySelectorAll('.tab-link'),
+        tabPanes: document.querySelectorAll('.tab-pane'),
+        
+        // Navbar & User
+        displayName: document.getElementById('display-name'),
+        userDisplay: document.getElementById('user-display'),
+        userDropdown: document.getElementById('user-dropdown'),
+        dropdownBackdrop: document.getElementById('dropdown-backdrop'),
+        logoutBtn: document.getElementById('logout-btn'),
+        openConfig: document.getElementById('open-config'),
+        
+        // Discovery
+        geoBtn: document.getElementById('geo-btn'),
+        radiusSelect: document.getElementById('radius-select'),
+        sectorFilter: document.getElementById('sector-filter'),
+        searchInput: document.getElementById('lead-search-input'),
+        interestFilter: document.getElementById('interest-filter'),
+        interestVal: document.getElementById('interest-val'),
+        statusFilter: document.getElementById('status-filter'),
+        dateFilter: document.getElementById('date-filter'),
+        emptyState: document.getElementById('empty-state'),
+        leadsContainer: document.getElementById('leads-container'),
+        
+        // Map Tab
+        resetMapBtn: document.getElementById('reset-map-btn'),
+        forceGpsBtn: document.getElementById('force-gps-btn'),
+        leadsGridHistory: document.getElementById('leads-grid'),
+        
+        // Modals
+        modal: document.getElementById('detail-modal'),
+        closeModal: document.getElementById('close-modal'),
+        modalTitleInput: document.getElementById('modal-title-input'),
+        modalFullAddress: document.getElementById('modal-full-address'),
+        modalPhone: document.getElementById('modal-phone'),
+        modalEmail: document.getElementById('modal-email'),
+        modalCif: document.getElementById('modal-cif'),
+        modalContactName: document.getElementById('modal-contact-name'),
+        modalServices: document.getElementById('modal-services'),
+        modalCp: document.getElementById('modal-cp'),
+        modalCity: document.getElementById('modal-city'),
+        modalBusinessName: document.getElementById('modal-business-name'),
+        modalRrss: document.getElementById('modal-rrss'),
+        modalAlarmCompany: document.getElementById('modal-alarm-company'),
+        statusBtns: document.querySelectorAll('.status-btn-pick'),
+        saveLeadBtn: document.getElementById('save-lead-btn'),
+        modalUpdated: document.getElementById('modal-updated'),
+        modalInterestBadge: document.getElementById('modal-interest-badge'),
+        modalStatusBadge: document.getElementById('modal-status-badge'),
+        modalMapsLink: document.getElementById('modal-maps-link'),
 
-    // Export Tools
-    exportExcelBtn: document.getElementById('export-excel-btn'),
-    exportAirtableBtn: document.getElementById('export-airtable-btn'),
-    navDeleteBtn: document.getElementById('nav-delete-btn'),
-    historyDeleteModal: document.getElementById('delete-history-modal'),
-    cancelDeleteBtn: document.getElementById('cancel-delete-btn'),
-    confirmDeleteBtn: document.getElementById('confirm-delete-btn'),
-    
-    // Stats
-    statTotal: document.getElementById('stat-total'),
-    statHigh: document.getElementById('stat-high'),
-    statFirmado: document.getElementById('stat-firmado'),
-    statSeguimiento: document.getElementById('stat-seguimiento'),
-    statVisita: document.getElementById('stat-visita'),
-    statDescartado: document.getElementById('stat-descartado'),
+        // Config Modal
+        configModal: document.getElementById('config-modal'),
+        closeConfigModal: document.getElementById('close-config-modal'),
+        saveConfigBtn: document.getElementById('save-config-btn'),
+        userPhone: document.getElementById('user-phone'),
+        userEmailDisplay: document.getElementById('user-email-display'),
+        airBase: document.getElementById('air-base'),
+        airToken: document.getElementById('air-token'),
 
-    // Nuevos controles
-    toggleManualBtn: document.getElementById('toggle-manual-btn'),
-    addManualLeadBtn: document.getElementById('add-manual-lead-btn'),
-    historyStatusFilter: document.getElementById('history-status-filter'),
-    showRegBtn: document.getElementById('show-reg-btn'),
-    forgotPasswordModal: document.getElementById('forgot-password-modal'),
-    closeForgotModal: document.getElementById('close-forgot-modal'),
-    forgotEmailInput: document.getElementById('forgot-email'),
-    sendResetBtn: document.getElementById('send-reset-btn'),
-    forgotFinishBtn: document.getElementById('forgot-finish-btn'),
-    forgotInitState: document.getElementById('forgot-init-state'),
-    forgotSendingState: document.getElementById('forgot-sending-state'),
-    forgotSuccessState: document.getElementById('forgot-success-state'),
-    sentEmailDisplay: document.getElementById('sent-email-display'),
-    userAvatarImg: document.getElementById('user-avatar-img'),
-    userAvatarInput: document.getElementById('user-avatar-input'),
-    triggerAvatarUpload: document.getElementById('trigger-avatar-upload'),
-    defaultAvatarIcon: document.getElementById('default-avatar-icon'),
-    explorationResults: document.getElementById('exploration-results'),
-    emptyExploration: document.getElementById('empty-state'),
-    
-    // Backup & Restore
-    downloadBackupBtn: document.getElementById('download-backup-btn'),
-    restoreBackupBtn: document.getElementById('restore-backup-btn'),
-    importBackupInput: document.getElementById('import-backup-input')
-};
+        // Export Tools
+        exportExcelBtn: document.getElementById('export-excel-btn'),
+        exportAirtableBtn: document.getElementById('export-airtable-btn'),
+        navDeleteBtn: document.getElementById('nav-delete-btn'),
+        historyDeleteModal: document.getElementById('delete-history-modal'),
+        cancelDeleteBtn: document.getElementById('cancel-delete-btn'),
+        confirmDeleteBtn: document.getElementById('confirm-delete-btn'),
+        
+        // Stats
+        statTotal: document.getElementById('stat-total'),
+        statHigh: document.getElementById('stat-high'),
+        statFirmado: document.getElementById('stat-firmado'),
+        statSeguimiento: document.getElementById('stat-seguimiento'),
+        statVisita: document.getElementById('stat-visita'),
+        statDescartado: document.getElementById('stat-descartado'),
+
+        // Nuevos controles
+        toggleManualBtn: document.getElementById('toggle-manual-btn'),
+        addManualLeadBtn: document.getElementById('add-manual-lead-btn'),
+        historyStatusFilter: document.getElementById('history-status-filter'),
+        showRegBtn: document.getElementById('show-reg-btn'),
+        forgotPasswordModal: document.getElementById('forgot-password-modal'),
+        closeForgotModal: document.getElementById('close-forgot-modal'),
+        forgotEmailInput: document.getElementById('forgot-email'),
+        sendResetBtn: document.getElementById('send-reset-btn'),
+        forgotFinishBtn: document.getElementById('forgot-finish-btn'),
+        forgotInitState: document.getElementById('forgot-init-state'),
+        forgotSendingState: document.getElementById('forgot-sending-state'),
+        forgotSuccessState: document.getElementById('forgot-success-state'),
+        sentEmailDisplay: document.getElementById('sent-email-display'),
+        userAvatarImg: document.getElementById('user-avatar-img'),
+        userAvatarInput: document.getElementById('user-avatar-input'),
+        triggerAvatarUpload: document.getElementById('trigger-avatar-upload'),
+        defaultAvatarIcon: document.getElementById('default-avatar-icon'),
+        explorationResults: document.getElementById('exploration-results'),
+        emptyExploration: document.getElementById('empty-state'),
+        
+        // Backup & Restore
+        downloadBackupBtn: document.getElementById('download-backup-btn'),
+        restoreBackupBtn: document.getElementById('restore-backup-btn'),
+        importBackupInput: document.getElementById('import-backup-input')
+    };
+}
 
 // --- Inicialización ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Cargado. Iniciando Explorador PRO...");
+    initDom();
     window.dom = dom;
     window.state = state;
     
