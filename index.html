@@ -8,7 +8,7 @@
     <!-- CSS & Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css?v=1.1">
+    <link rel="stylesheet" href="style.css?v=1.3">
     <style>
         .hidden { display: none !important; }
     </style>
@@ -168,35 +168,47 @@
                             <input type="text" id="lead-search-input" placeholder="Filtrar lista por nombre, calle o CIF...">
                         </div>
                         
-                        <div class="filter-group-horizontal">
-                            <div class="filter-select-wrapper">
+                        <div class="premium-filters-container">
+                            <div class="premium-filter-pill">
                                 <label>RADIO</label>
-                                <select id="radius-select">
-                                    <option value="500">500M</option>
-                                    <option value="1000" selected>1KM</option>
-                                    <option value="2000">2KM</option>
-                                    <option value="5000">5KM</option>
-                                </select>
+                                <div class="pill-select-area">
+                                    <i data-lucide="radio"></i>
+                                    <select id="radius-select">
+                                        <option value="500">500M</option>
+                                        <option value="1000" selected>1KM</option>
+                                        <option value="2000">2KM</option>
+                                        <option value="5000">5KM</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="arrow"></i>
+                                </div>
                             </div>
-                            <div class="filter-select-wrapper">
+                            <div class="premium-filter-pill">
                                 <label>SECTOR</label>
-                                <select id="sector-filter">
-                                    <option value="all">TODOS</option>
-                                    <option value="Restaurante">RESTAURACIÓN</option>
-                                    <option value="Farmacia">FARMACIA</option>
-                                    <option value="Gym">DEPORTES</option>
-                                    <option value="Moda">RETAIL</option>
-                                    <option value="Clínica">CLÍNICAS</option>
-                                </select>
+                                <div class="pill-select-area">
+                                    <i data-lucide="briefcase"></i>
+                                    <select id="sector-filter">
+                                        <option value="all">TODOS</option>
+                                        <option value="Restaurante">RESTAURACIÓN</option>
+                                        <option value="Farmacia">FARMACIA</option>
+                                        <option value="Gym">DEPORTES</option>
+                                        <option value="Moda">RETAIL</option>
+                                        <option value="Clínica">CLÍNICAS</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="arrow"></i>
+                                </div>
                             </div>
-                            <div class="filter-select-wrapper">
+                            <div class="premium-filter-pill">
                                 <label>ESTADO</label>
-                                <select id="status-filter">
-                                    <option value="all">TODOS</option>
-                                    <option value="visita">VISITAS</option>
-                                    <option value="seguimiento">SEGUIMIENTOS</option>
-                                    <option value="descartado">DESCARTADOS</option>
-                                </select>
+                                <div class="pill-select-area">
+                                    <i data-lucide="activity"></i>
+                                    <select id="status-filter">
+                                        <option value="all">TODOS</option>
+                                        <option value="visita">VISITAS</option>
+                                        <option value="seguimiento">SEGUIMIENTOS</option>
+                                        <option value="descartado">DESCARTADOS</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="arrow"></i>
+                                </div>
                             </div>
                         </div>
                     </div>

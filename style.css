@@ -312,35 +312,48 @@ input[readonly] {
 .search-box-premium input { background: none; border: none; color: white; width: 100%; font-size: 0.9rem; padding: 0.6rem 0; }
 .search-box-premium i { opacity: 0.4; }
 
-.filter-group-horizontal { display: flex; gap: 1.5rem; align-items: center; }
-.filter-select-wrapper { display: flex; flex-direction: column; gap: 0.3rem; }
-.filter-select-wrapper label { font-size: 0.6rem; font-weight: 900; color: var(--primary-yellow); opacity: 0.6; letter-spacing: 1px; }
-.filter-select-wrapper select {
-    background: rgba(0,0,0,0.2) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FED000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 1rem center;
-    background-size: 16px;
-    padding: 0.8rem 2.5rem 0.8rem 1rem;
-    border: 1px solid rgba(254, 208, 0, 0.3);
-    border-radius: 1rem;
-    color: white;
-    font-weight: 800;
-    font-size: 0.8rem;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    height: 48px;
-    width: 100%;
-    min-width: 140px;
+.premium-filters-container {
+    display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.2); padding: 1rem; border-radius: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.05); width: 100%;
 }
-.filter-select-wrapper select:hover {
-    border-color: var(--primary-yellow);
-    background-color: rgba(254, 208, 0, 0.05);
+
+.premium-filter-pill {
+    flex: 1; min-width: 140px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1.2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s;
+    display: flex; flex-direction: column;
 }
-.filter-select-wrapper select:focus {
+
+.premium-filter-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary-yellow);
-    box-shadow: 0 0 10px rgba(254, 208, 0, 0.2);
+}
+
+.premium-filter-pill label {
+    font-size: 0.6rem; font-weight: 900; color: var(--primary-yellow);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+}
+
+.pill-select-area {
+    display: flex; align-items: center; position: relative; gap: 0.8rem;
+}
+
+.pill-select-area i:first-child { width: 16px; color: var(--text-muted); opacity: 0.8; }
+.pill-select-area .arrow { position: absolute; right: 0; width: 18px; color: var(--primary-yellow); pointer-events: none; }
+
+.pill-select-area select {
+    background: transparent; border: none; color: white;
+    font-weight: 800; font-size: 0.9rem; width: 100%;
+    cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
+    padding-right: 1.5rem; /* Espacio para la flecha */
+}
+
+.pill-select-area select option {
+    background: var(--bg-dark); color: white; font-weight: 600;
 }
 
 /* Empty Exploration State - Radar Pro */
