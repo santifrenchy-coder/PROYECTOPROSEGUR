@@ -16,6 +16,7 @@ let state = {
     },
     lastSearchCenter: null,
     manualMode: false,
+    addMode: false,
     searchCircle: null
 };
 
@@ -60,6 +61,7 @@ function initDom() {
         
         // Discovery
         geoBtn: document.getElementById('geo-btn'),
+        searchCityBtn: document.getElementById('search-city-btn'),
         radiusSelect: document.getElementById('radius-select'),
         sectorFilter: document.getElementById('sector-filter'),
         searchInput: document.getElementById('lead-search-input'),
@@ -96,6 +98,8 @@ function initDom() {
         modalInterestBadge: document.getElementById('modal-interest-badge'),
         modalStatusBadge: document.getElementById('modal-status-badge'),
         modalMapsLink: document.getElementById('modal-maps-link'),
+        modalSector: document.getElementById('modal-sector'),
+        deleteLeadBtn: document.getElementById('delete-lead-btn'),
 
         // Config Modal
         configModal: document.getElementById('config-modal'),
@@ -142,6 +146,13 @@ function initDom() {
         defaultAvatarIcon: document.getElementById('default-avatar-icon'),
         explorationResults: document.getElementById('exploration-results'),
         emptyExploration: document.getElementById('empty-state'),
+        
+        // Add Lead Modal (Manual)
+        addLeadModal: document.getElementById('add-lead-modal'),
+        closeAddModal: document.getElementById('close-add-modal'),
+        addLeadName: document.getElementById('add-lead-name'),
+        addLeadSector: document.getElementById('add-lead-sector'),
+        confirmAddLeadBtn: document.getElementById('confirm-add-lead-btn'),
         
         // Backup & Restore
         downloadBackupBtn: document.getElementById('download-backup-btn'),
@@ -217,11 +228,17 @@ function setupEventListeners() {
     if (dom.cancelDeleteBtn) dom.cancelDeleteBtn.onclick = () => dom.historyDeleteModal.classList.remove('active');
     if (dom.confirmDeleteBtn) {
         dom.confirmDeleteBtn.onclick = () => {
-            const period = document.getElementById('delete-period').value;
+            const periodInput = document.querySelector('input[name="delete-period"]:checked');
+            const period = periodInput ? periodInput.value : 'today';
             executeSelectiveDelete(period);
             dom.historyDeleteModal.classList.remove('active');
         };
     }
+
+    // Manual Add Lead Modal
+    if (dom.closeAddModal) dom.closeAddModal.onclick = () => dom.addLeadModal.classList.remove('active');
+    if (dom.confirmAddLeadBtn) dom.confirmAddLeadBtn.onclick = saveNewManualLead;
+    if (dom.deleteLeadBtn) dom.deleteLeadBtn.onclick = deleteCurrentLead;
 
     // Tabs
     dom.tabBtns.forEach(btn => {
@@ -305,9 +322,29 @@ function setupEventListeners() {
     if (dom.importBackupInput) dom.importBackupInput.onchange = importFullBackup;
 
     // Search & Discovery
-    if (dom.geoBtn) dom.geoBtn.onclick = handleGeolocation;
-    if (dom.resetMapBtn) dom.resetMapBtn.onclick = handleGeolocation;
-    if (dom.forceGpsBtn) dom.forceGpsBtn.onclick = handleGeolocation;
+    if (dom.searchCityBtn) {
+        dom.searchCityBtn.onclick = async () => {
+            const query = prompt("Introduce la ciudad, calle o código postal para buscar prospectos:");
+            if (!query) return;
+            dom.searchCityBtn.innerHTML = '<i class="lucide-loader spin"></i> <span class="hide-mobile">BUSCANDO...</span>';
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    onLocalSuccess(parseFloat(data[0].lat), parseFloat(data[0].lon), true);
+                } else {
+                    alert("No se encontró esa ubicación.");
+                }
+            } catch (e) {
+                alert("Error de red al buscar ubicación.");
+            }
+            dom.searchCityBtn.innerHTML = '<i data-lucide="search"></i> <span class="hide-mobile">IR A CALLE</span>';
+            if (window.lucide) lucide.createIcons();
+        };
+    }
+    if (dom.geoBtn) dom.geoBtn.onclick = () => handleGeolocation(true); // Actualizar zona (Buscar)
+    if (dom.resetMapBtn) dom.resetMapBtn.onclick = () => handleGeolocation(false); // Solo Centrado GPS
+    if (dom.forceGpsBtn) dom.forceGpsBtn.onclick = () => handleGeolocation(true); // Buscar Aquí
     
     if (dom.radiusSelect) dom.radiusSelect.onchange = handleFiltering;
     if (dom.sectorFilter) dom.sectorFilter.onchange = handleFiltering;
@@ -326,15 +363,27 @@ function setupEventListeners() {
     if (dom.toggleManualBtn) {
         dom.toggleManualBtn.onclick = () => {
             state.manualMode = !state.manualMode;
+            state.addMode = false; // Desactivar modo añadir si activamos manual
             dom.toggleManualBtn.classList.toggle('active', state.manualMode);
+            if (dom.addManualLeadBtn) dom.addManualLeadBtn.classList.remove('active');
             dom.toggleManualBtn.querySelector('span').innerText = state.manualMode ? 'MANUAL: ON' : 'MANUAL: OFF';
+            console.log("Modo Manual:", state.manualMode);
         };
     }
 
     if (dom.addManualLeadBtn) {
         dom.addManualLeadBtn.onclick = () => {
-            if (!state.lastSearchCenter) return alert("Primero ubícate en el mapa.");
-            addNewManualLead(state.lastSearchCenter.lat, state.lastSearchCenter.lng);
+            state.addMode = !state.addMode;
+            state.manualMode = false; // Desactivar manual si activamos añadir
+            dom.addManualLeadBtn.classList.toggle('active', state.addMode);
+            if (dom.toggleManualBtn) dom.toggleManualBtn.classList.remove('active');
+            
+            const btnSpan = dom.addManualLeadBtn.querySelector('span');
+            if (state.addMode) {
+                btnSpan.innerText = 'TOCA EL MAPA...';
+            } else {
+                btnSpan.innerText = 'AÑADIR LOCAL';
+            }
         };
     }
 
@@ -447,42 +496,61 @@ function initMap() {
     try {
         if (!document.getElementById('map')) return console.warn("Elemento #map no encontrado");
         
-        map = L.map('map', { zoomControl: false }).setView([40.4167, -3.7033], 15);
+        map = L.map('map', { 
+            zoomControl: true,
+            scrollWheelZoom: true,
+            touchZoom: true
+        }).setView([40.4167, -3.7033], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '©OpenStreetMap'
         }).addTo(map);
         
         markersLayer = L.layerGroup().addTo(map);
 
-        // Permitir clic en el mapa para búsqueda manual
         map.on('click', (e) => {
-            if (!state.manualMode) return;
-            onLocalSuccess(e.latlng.lat, e.latlng.lng);
+            if (state.addMode) {
+                openAddLeadModal(e.latlng.lat, e.latlng.lng);
+                state.addMode = false;
+                if (dom.addManualLeadBtn) {
+                    dom.addManualLeadBtn.classList.remove('active');
+                    dom.addManualLeadBtn.querySelector('span').innerText = 'AÑADIR LOCAL';
+                }
+            } else if (state.manualMode) {
+                onLocalSuccess(e.latlng.lat, e.latlng.lng, true);
+            }
         });
     } catch (err) {
         console.error("Error inicializando mapa Leaflet:", err);
     }
 }
 
-function handleGeolocation() {
-    dom.geoBtn.innerHTML = '<i class="lucide-refresh-cw spin"></i> BUSCANDO...';
+function handleGeolocation(triggerSearch = true) {
+    if (dom.geoBtn) dom.geoBtn.innerHTML = '<i class="lucide-refresh-cw spin"></i> BUSCANDO...';
     
-    const options = { timeout: 10000, enableHighAccuracy: true };
+    const options = { timeout: 15000, enableHighAccuracy: true, maximumAge: 0 };
     
     navigator.geolocation.getCurrentPosition((pos) => {
         const { latitude, longitude } = pos.coords;
-        onLocalSuccess(latitude, longitude);
-        dom.geoBtn.innerHTML = '<i data-lucide="check"></i> ACTUALIZADO';
-        lucide.createIcons();
-        setTimeout(() => { dom.geoBtn.innerHTML = '<i data-lucide="maximize"></i> ACTUALIZAR ZONA'; lucide.createIcons(); }, 3000);
+        onLocalSuccess(latitude, longitude, triggerSearch);
+        
+        if (dom.geoBtn) {
+            dom.geoBtn.innerHTML = '<i data-lucide="crosshair"></i> CENTRADO';
+            lucide.createIcons();
+            setTimeout(() => { 
+                dom.geoBtn.innerHTML = '<i data-lucide="crosshair"></i> CENTRADO GPS'; 
+                lucide.createIcons(); 
+            }, 3000);
+        }
     }, (err) => {
-        alert("Fallo GPS: " + err.message + ". Usando posición por defecto (Madrid).");
-        onLocalSuccess(40.4167, -3.7033);
-        dom.geoBtn.innerHTML = '<i data-lucide="maximize"></i> ACTUALIZAR ZONA'; lucide.createIcons();
+        console.error("Error GPS:", err);
+        // Si falla, al menos intentamos centrar donde estuviéramos
+        if (state.lastSearchCenter) {
+            map.setView([state.lastSearchCenter.lat, state.lastSearchCenter.lng], 15);
+        }
     }, options);
 }
 
-async function onLocalSuccess(lat, lng) {
+async function onLocalSuccess(lat, lng, triggerSearch = true) {
     state.lastSearchCenter = { lat, lng };
     
     if (!userMarker) {
@@ -513,8 +581,8 @@ async function onLocalSuccess(lat, lng) {
         }).addTo(map);
     }
 
-    map.setView([lat, lng], 15);
-    generateLeads(lat, lng, r);
+    map.setView([lat, lng], map.getZoom() || 15);
+    if (triggerSearch) generateLeads(lat, lng, r);
 }
 
 // --- Motor de Búsqueda (Overpass Fix) ---
@@ -648,7 +716,7 @@ function renderLeads() {
 
     const filtered = state.leads.filter(l => {
         if (filters.sector !== 'all' && !l.sector.toLowerCase().includes(filters.sector.toLowerCase())) return false;
-        if (filters.search && !l.name.toLowerCase().includes(filters.search) && !l.address.toLowerCase().includes(filters.search)) return false;
+        if (filters.search && !l.name.toLowerCase().includes(filters.search) && !l.address.toLowerCase().includes(filters.search) && !(l.cif && l.cif.toLowerCase().includes(filters.search))) return false;
         if (l.interest < filters.interest) return false;
         if (filters.status !== 'all' && l.status !== filters.status) return false;
         
@@ -667,6 +735,7 @@ function renderLeads() {
         if (dom.emptyExploration) dom.emptyExploration.style.display = 'none';
         filtered.forEach(lead => {
             const card = createLeadCard(lead);
+            // El botón 'DETALLES' ya maneja la apertura, evitamos clics accidentales al hacer scroll
             dom.leadsContainer.appendChild(card);
         });
     } else {
@@ -705,7 +774,7 @@ function createLeadCard(lead) {
                 </p>
             </div>
             <span class="badge-status-premium ${lead.status}">
-                ${lead.status.toUpperCase()}
+                ${lead.status === 'descartado' ? 'DESCARTADO' : lead.status.toUpperCase()}
             </span>
         </div>
         
@@ -772,40 +841,6 @@ function renderMapPins() {
     });
 }
 
-function addNewManualLead(lat, lng) {
-    const name = prompt("Nombre del nuevo local:");
-    if (!name) return;
-    
-    const newLead = {
-        id: 'manual_' + Date.now(),
-        name,
-        sector: "Añadido Manual",
-        address: "Ubicación en mapa",
-        phone: "No disponible",
-        email: "No disponible",
-        cif: "Pendiente",
-        contactName: "Pendiente",
-        cp: "",
-        city: "",
-        rrss: "",
-        alarm: "NINGUNA",
-        interest: 50,
-        status: 'visita',
-        services: "Local añadido manualmente por el agente en campo.",
-        lat,
-        lng,
-        date: new Date().toLocaleDateString(),
-        lastUpdate: '--'
-    };
-    
-    state.leads.unshift(newLead);
-    saveToDisk();
-    renderLeads();
-    renderMapPins();
-    updateStats();
-    alert("Local añadido al historial.");
-}
-
 // --- Detalle y Gestión ---
 function openLead(lead) {
     currentLead = lead;
@@ -821,6 +856,7 @@ function openLead(lead) {
     if(dom.modalBusinessName) dom.modalBusinessName.value = lead.name || "";
     if(dom.modalRrss) dom.modalRrss.value = lead.rrss || "";
     if(dom.modalAlarmCompany) dom.modalAlarmCompany.value = lead.alarm || "NINGUNA";
+    if(dom.modalSector) dom.modalSector.value = lead.sector || "";
     dom.modalUpdated.innerText = lead.lastUpdate;
     
     // Color según interés en el modal
@@ -833,7 +869,7 @@ function openLead(lead) {
     dom.modalInterestBadge.style.color = interestColor;
     dom.modalInterestBadge.style.borderColor = interestColor + '44'; // 44 es opacidad en hex
 
-    dom.modalStatusBadge.innerText = lead.status.toUpperCase();
+    dom.modalStatusBadge.innerText = lead.status === 'descartado' ? 'DESCARTADO' : lead.status.toUpperCase();
     dom.modalStatusBadge.className = 'badge-status-premium ' + lead.status;
     dom.modalMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name + ' ' + lead.address)}`;
     
@@ -877,6 +913,7 @@ function saveLeadChanges() {
     if(dom.modalCity) currentLead.city = dom.modalCity.value;
     if(dom.modalRrss) currentLead.rrss = dom.modalRrss.value;
     if(dom.modalAlarmCompany) currentLead.alarm = dom.modalAlarmCompany.value;
+    if(dom.modalSector) currentLead.sector = dom.modalSector.value;
     currentLead.lastUpdate = new Date().toLocaleString();
     
     const idx = state.leads.findIndex(l => l.id === currentLead.id);
@@ -1127,5 +1164,70 @@ async function exportToAirtable() {
     }
 }
 
-// Manejo de Registro Externo via URL (Opcional)
+// Manejo de Filtros
 function handleFiltering() { renderLeads(); }
+
+// --- Gestión de Prospectos Manuales ---
+
+
+function openAddLeadModal(lat, lng) {
+    state.tempManualCoords = { lat, lng };
+    if (dom.addLeadName) dom.addLeadName.value = "";
+    if (dom.addLeadSector) dom.addLeadSector.value = "";
+    if (dom.addLeadModal) dom.addLeadModal.classList.add('active');
+    setTimeout(() => dom.addLeadName && dom.addLeadName.focus(), 300);
+}
+
+function saveNewManualLead() {
+    const name = dom.addLeadName.value.trim();
+    const sector = dom.addLeadSector.value.trim() || "Comercial";
+    
+    if (!name) return alert("Por favor, introduce el nombre del negocio.");
+    if (!state.tempManualCoords) return;
+
+    const { lat, lng } = state.tempManualCoords;
+    
+    const newLead = {
+        id: 'manual_' + Date.now(),
+        name,
+        sector,
+        address: "Añadido Manual",
+        phone: "No disponible",
+        email: "No disponible",
+        cif: "Pendiente",
+        cp: "",
+        city: "",
+        contactName: "",
+        rrss: "",
+        alarm: "NINGUNA",
+        interest: 50,
+        status: 'visita',
+        lat,
+        lng,
+        date: new Date().toLocaleDateString(),
+        lastUpdate: new Date().toLocaleString()
+    };
+    
+    state.leads.unshift(newLead);
+    saveToDisk();
+    renderLeads();
+    renderMapPins();
+    updateStats();
+    
+    dom.addLeadModal.classList.remove('active');
+    
+    // Abrir automáticamente la ficha para completar datos
+    setTimeout(() => openLead(newLead), 500);
+}
+
+function deleteCurrentLead() {
+    if (!currentLead) return;
+    if (!confirm("¿Estás seguro de que quieres eliminar este prospecto permanentemente? Esta acción no se puede deshacer.")) return;
+    
+    state.leads = state.leads.filter(l => l.id !== currentLead.id);
+    saveToDisk();
+    renderLeads();
+    renderMapPins();
+    updateStats();
+    dom.modal.classList.remove('active');
+}

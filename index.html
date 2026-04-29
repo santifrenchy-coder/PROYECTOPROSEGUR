@@ -137,7 +137,7 @@
                         </div>
                         <div class="stat-box danger">
                             <span class="stat-val" id="stat-descartado" style="color: var(--danger);">0</span>
-                            <span class="stat-label">Rechazados</span>
+                            <span class="stat-label">Descartados</span>
                         </div>
                     </div>
                 </div>
@@ -151,16 +151,21 @@
                             <h2 style="letter-spacing: 2px; font-weight: 900;">CENTRO DE EXPLORACIÓN</h2>
                             <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 1px;">Detectando oportunidades de negocio en tiempo real</p>
                         </div>
-                        <button id="geo-btn" class="btn btn-primary btn-radar">
-                            <div class="radar-ping"></div>
-                            <i data-lucide="scan"></i> <span>ACTUALIZAR ZONA</span>
-                        </button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="search-city-btn" class="btn btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow); padding: 0 1rem;" title="Ir a otra calle o ciudad">
+                                <i data-lucide="search"></i> <span class="hide-mobile">IR A CALLE</span>
+                            </button>
+                            <button id="geo-btn" class="btn btn-primary btn-radar">
+                                <div class="radar-ping"></div>
+                                <i data-lucide="scan"></i> <span>ACTUALIZAR ZONA</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="exploration-filters-bar">
                         <div class="search-box-premium">
                             <i data-lucide="search"></i>
-                            <input type="text" id="lead-search-input" placeholder="Buscar por nombre, calle o CIF...">
+                            <input type="text" id="lead-search-input" placeholder="Filtrar lista por nombre, calle o CIF...">
                         </div>
                         
                         <div class="filter-group-horizontal">
@@ -190,7 +195,7 @@
                                     <option value="all">TODOS</option>
                                     <option value="visita">VISITAS</option>
                                     <option value="seguimiento">SEGUIMIENTOS</option>
-                                    <option value="descartado">RECHAZADOS</option>
+                                    <option value="descartado">DESCARTADOS</option>
                                 </select>
                             </div>
                         </div>
@@ -220,8 +225,8 @@
             <!-- Tab 3: Interactive Map -->
             <section id="map-history-tab" class="tab-pane">
                 <div class="map-controls-top">
-                    <button id="reset-map-btn" class="btn-glass"><i data-lucide="refresh-cw"></i> REUBICAR GPS</button>
-                    <button id="force-gps-btn" class="btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow);"><i data-lucide="zap"></i> FORZAR</button>
+                    <button id="reset-map-btn" class="btn-glass"><i data-lucide="crosshair"></i> CENTRADO GPS</button>
+                    <button id="force-gps-btn" class="btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow);"><i data-lucide="zap"></i> BUSCAR AQUÍ</button>
                 </div>
                 
                 <div class="map-frame">
@@ -397,6 +402,10 @@
                                 <input type="text" id="modal-rrss" placeholder="@usuario o sitio web">
                             </div>
                         </div>
+                        <div class="input-group">
+                            <label>Actividad / Sector</label>
+                            <input type="text" id="modal-sector" placeholder="Ej: Restaurante, Farmacia, Clínica...">
+                        </div>
                     </div>
 
                     <div class="info-section" style="margin-top: 1.5rem;">
@@ -431,6 +440,7 @@
                     <div class="action-buttons" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
                         <a id="modal-maps-link" href="#" target="_blank" class="btn" style="background: #4285F4; color: white;"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
                         <button id="save-lead-btn" class="btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                        <button id="delete-lead-btn" class="btn btn-full" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); margin-top: 1rem;"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
                     </div>
                     <div style="text-align: center; margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.3; font-weight: 700;">
                         Último cambio: <span id="modal-updated">--</span>
@@ -454,6 +464,35 @@
             <div style="display: flex; gap: 0.8rem;">
                 <button id="cancel-delete-btn" class="btn btn-full" style="background: rgba(255,255,255,0.05);">CANCELAR</button>
                 <button id="confirm-delete-btn" class="btn btn-full" style="background: var(--danger); color: white;">BORRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Lead Modal (Manual) -->
+    <div id="add-lead-modal" class="modal">
+        <div class="modal-card mini">
+            <span class="modal-close" id="close-add-modal">&times;</span>
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="padding: 1rem; color: var(--primary-yellow); font-size: 2.5rem;"><i data-lucide="plus-circle"></i></div>
+                <h2 style="color: var(--primary-yellow);">Nuevo Prospecto</h2>
+                <p style="font-size: 0.8rem; opacity: 0.5;">Añadir local manualmente a tu ruta</p>
+            </div>
+            
+            <div class="modal-body">
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label>Nombre del Negocio</label>
+                    <input type="text" id="add-lead-name" placeholder="Ej: Cafetería Central">
+                </div>
+                <div class="input-group" style="margin-bottom: 2rem;">
+                    <label>Sector / Actividad</label>
+                    <input type="text" id="add-lead-sector" placeholder="Ej: Restaurante, Clínica...">
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button id="confirm-add-lead-btn" class="btn btn-primary btn-full" style="padding: 1.2rem; font-size: 0.9rem;">
+                        <i data-lucide="save"></i> GUARDAR EN HISTORIAL
+                    </button>
+                </div>
             </div>
         </div>
     </div>

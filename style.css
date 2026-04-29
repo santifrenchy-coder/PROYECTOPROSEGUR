@@ -315,7 +315,33 @@ input[readonly] {
 .filter-group-horizontal { display: flex; gap: 1.5rem; align-items: center; }
 .filter-select-wrapper { display: flex; flex-direction: column; gap: 0.3rem; }
 .filter-select-wrapper label { font-size: 0.6rem; font-weight: 900; color: var(--primary-yellow); opacity: 0.6; letter-spacing: 1px; }
-.filter-select-wrapper select { background: none; border: none; color: white; font-weight: 800; font-size: 0.8rem; cursor: pointer; padding: 0; outline: none; }
+.filter-select-wrapper select {
+    background: rgba(0,0,0,0.2) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FED000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 1rem center;
+    background-size: 16px;
+    padding: 0.8rem 2.5rem 0.8rem 1rem;
+    border: 1px solid rgba(254, 208, 0, 0.3);
+    border-radius: 1rem;
+    color: white;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    height: 48px;
+    width: 100%;
+    min-width: 140px;
+}
+.filter-select-wrapper select:hover {
+    border-color: var(--primary-yellow);
+    background-color: rgba(254, 208, 0, 0.05);
+}
+.filter-select-wrapper select:focus {
+    border-color: var(--primary-yellow);
+    box-shadow: 0 0 10px rgba(254, 208, 0, 0.2);
+}
 
 /* Empty Exploration State - Radar Pro */
 .empty-exploration-state { text-align: center; padding: 4rem 2rem; }
