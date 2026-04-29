@@ -20,6 +20,11 @@ let state = {
     searchCircle: null
 };
 
+// --- Configuración Supabase ---
+const SUPABASE_URL = 'https://iwxxixyjaxenojckohml.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHhpeHlqYXhlbm9qY2tvaG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNjEyMjMsImV4cCI6MjA5MjkzNzIyM30.NO3dG4HALVF81bXZoGRsiDxbwuYzi53pjNyGt4O85lA';
+let supabase = null;
+
 let map = null;
 let userMarker = null;
 let currentLead = null;
@@ -167,6 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initDom();
     window.dom = dom;
     window.state = state;
+    
+    try {
+        if (window.supabase) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("Supabase cliente inicializado.");
+        }
+    } catch (e) {
+        console.warn("Supabase no pudo inicializarse:", e);
+    }
     
     try {
         setupEventListeners();
@@ -965,6 +979,7 @@ function saveToDisk() {
     try {
         localStorage.setItem('pro_leads_' + state.user.name, JSON.stringify(state.leads));
         console.log("Datos guardados correctamente: " + state.leads.length + " prospectos.");
+        syncToSupabase(); // Sincronización en la nube (Offline-first / Backup)
     } catch (e) {
         console.error("Error crítico de guardado:", e);
         alert("¡ATENCIÓN! No se han podido guardar los datos en el navegador. Por favor, descarga un Backup inmediatamente para no perder tu trabajo.");
@@ -1230,4 +1245,47 @@ function deleteCurrentLead() {
     renderMapPins();
     updateStats();
     dom.modal.classList.remove('active');
+}
+
+// --- Integración Supabase (Offline-First Backup) ---
+async function syncToSupabase() {
+    if (!supabase || !state.user || state.leads.length === 0) return;
+    
+    try {
+        const leadsToUpsert = state.leads.map(l => ({
+            id: l.id,
+            name: l.name,
+            address: l.address,
+            sector: l.sector,
+            status: l.status,
+            interest: l.interest,
+            cif: l.cif || '',
+            cp: l.cp || '',
+            city: l.city || '',
+            contact_name: l.contactName || '',
+            phone: l.phone || '',
+            email: l.email || '',
+            rrss: l.rrss || '',
+            alarm: l.alarm || '',
+            services: l.services || '',
+            lat: l.lat || null,
+            lng: l.lng || null,
+            date: l.date,
+            last_update: l.lastUpdate || null,
+            user_id: state.user.name // Identificar propietario en BBDD
+        }));
+
+        // Upsert masivo (Inserta si no existe, actualiza si existe, basado en la primary key 'id')
+        const { data, error } = await supabase
+            .from('leads')
+            .upsert(leadsToUpsert, { onConflict: 'id' });
+
+        if (error) {
+            console.error("Error sincronizando con Supabase (La tabla 'leads' debe existir):", error);
+        } else {
+            console.log("Backup en Supabase completado con éxito.");
+        }
+    } catch (e) {
+        console.error("Excepción en sync Supabase:", e);
+    }
 }
