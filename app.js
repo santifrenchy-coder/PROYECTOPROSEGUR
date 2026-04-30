@@ -23,7 +23,7 @@ let state = {
 // --- Configuración Supabase ---
 const SUPABASE_URL = 'https://iwxxixyjaxenojckohml.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHhpeHlqYXhlbm9qY2tvaG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNjEyMjMsImV4cCI6MjA5MjkzNzIyM30.NO3dG4HALVF81bXZoGRsiDxbwuYzi53pjNyGt4O85lA';
-let supabase = null;
+let sb = null;
 
 let map = null;
 let userMarker = null;
@@ -171,42 +171,35 @@ function initDom() {
     };
 }
 
-// --- Inicialización ---
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Cargado. Iniciando Explorador PRO...");
-    initDom();
-    window.dom = dom;
-    window.state = state;
-    
+// --- Inicialización Robusta ---
+function bootstrapApp() {
+    console.log("🚀 Iniciando Explorador PRO (Bootstrap)...");
     try {
-        if (window.supabase) {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log("Supabase cliente inicializado.");
+        initDom();
+        window.dom = dom;
+        window.state = state;
+        
+        // Supabase
+        const supabaseLib = window.supabase || (typeof supabase !== 'undefined' && window.supabase !== supabase ? supabase : null);
+        if (supabaseLib && typeof supabaseLib.createClient === 'function') {
+            sb = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("✅ Supabase cliente inicializado.");
         }
-    } catch (e) {
-        console.warn("Supabase no pudo inicializarse:", e);
-    }
-    
-    try {
+
         setupEventListeners();
-        console.log("Event listeners configurados.");
-    } catch (e) {
-        console.error("Error en setupEventListeners:", e);
-    }
-
-    try {
         initAuth();
-        console.log("Auth iniciado.");
+        
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        console.log("✨ App lista y operativa.");
     } catch (e) {
-        console.error("Error en initAuth:", e);
+        console.error("❌ Error crítico en el inicio:", e);
     }
+}
 
-    try {
-        lucide.createIcons();
-    } catch (e) {
-        console.warn("Error cargando iconos Lucide:", e);
-    }
-});
+// Ejecutar inmediatamente (el script está al final del body)
+bootstrapApp();
 
 function initAuth() {
     const savedUser = localStorage.getItem('pro_user');
@@ -717,7 +710,7 @@ async function generateLeads(lat, lng, r) {
         }
     });
 
-    localStorage.setItem('pro_leads_' + state.user.name, JSON.stringify(state.leads));
+    saveToDisk();
     renderLeads();
     renderMapPins();
     updateStats();
@@ -1255,8 +1248,14 @@ function deleteCurrentLead() {
 
 // --- Integración Supabase (Offline-First Backup) ---
 async function syncToSupabase(isManual = false) {
-    if (!supabase || !state.user || state.leads.length === 0) {
+    if (!sb || !state.user || state.leads.length === 0) {
         if (isManual) alert("No hay datos para sincronizar o Supabase no está configurado.");
+        
+        // Si no hay configuración, mostrar un estado de "aviso" en el icono
+        if (!sb && dom.cloudSyncStatus) {
+            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-off"></i> <span class="hide-mobile">NO CONFIG</span>';
+            if (window.lucide) lucide.createIcons();
+        }
         return;
     }
     
@@ -1295,7 +1294,7 @@ async function syncToSupabase(isManual = false) {
             user_id: state.user.name 
         }));
 
-        const { error } = await supabase
+        const { error } = await sb
             .from('leads')
             .upsert(leadsToUpsert, { onConflict: 'id' });
 
