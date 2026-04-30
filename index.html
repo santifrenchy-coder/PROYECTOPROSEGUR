@@ -68,6 +68,9 @@
             
             <div class="nav-right">
                 <div class="nav-actions-group">
+                    <div id="cloud-sync-status" class="cloud-sync-indicator" title="Estado de Sincronización">
+                        <i data-lucide="cloud"></i> <span class="hide-mobile">NUBE</span>
+                    </div>
                     <button id="export-excel-btn" type="button" class="nav-btn-text btn-excel" title="Exportar Excel">
                         <i data-lucide="file-spreadsheet"></i>
                         <span class="btn-label">EXCEL</span>
@@ -323,6 +326,10 @@
                         </button>
                         <input type="file" id="import-backup-input" accept=".json" class="hidden">
                     </div>
+                    <button id="force-sync-btn" class="btn-sync-now">
+                        <i data-lucide="refresh-cw"></i> SINCRONIZAR AHORA CON SUPABASE
+                    </button>
+                    <p id="last-sync-text" class="sync-status-text">Sin sincronizar</p>
                 </div>
                 <div class="profile-section" style="margin-top: 2.5rem;">
                     <div class="section-title"><i data-lucide="database" style="width: 14px;"></i> CONEXIÓN AIRTABLE</div>

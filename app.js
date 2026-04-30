@@ -162,7 +162,12 @@ function initDom() {
         // Backup & Restore
         downloadBackupBtn: document.getElementById('download-backup-btn'),
         restoreBackupBtn: document.getElementById('restore-backup-btn'),
-        importBackupInput: document.getElementById('import-backup-input')
+        importBackupInput: document.getElementById('import-backup-input'),
+        
+        // Supabase Sync UI
+        cloudSyncStatus: document.getElementById('cloud-sync-status'),
+        forceSyncBtn: document.getElementById('force-sync-btn'),
+        lastSyncText: document.getElementById('last-sync-text')
     };
 }
 
@@ -334,6 +339,7 @@ function setupEventListeners() {
     if (dom.downloadBackupBtn) dom.downloadBackupBtn.onclick = downloadFullBackup;
     if (dom.restoreBackupBtn) dom.restoreBackupBtn.onclick = () => dom.importBackupInput && dom.importBackupInput.click();
     if (dom.importBackupInput) dom.importBackupInput.onchange = importFullBackup;
+    if (dom.forceSyncBtn) dom.forceSyncBtn.onclick = forceSync;
 
     // Search & Discovery
     if (dom.searchCityBtn) {
@@ -1248,8 +1254,22 @@ function deleteCurrentLead() {
 }
 
 // --- Integración Supabase (Offline-First Backup) ---
-async function syncToSupabase() {
-    if (!supabase || !state.user || state.leads.length === 0) return;
+async function syncToSupabase(isManual = false) {
+    if (!supabase || !state.user || state.leads.length === 0) {
+        if (isManual) alert("No hay datos para sincronizar o Supabase no está configurado.");
+        return;
+    }
+    
+    // UI Feedback Start
+    if (dom.cloudSyncStatus) {
+        dom.cloudSyncStatus.classList.add('syncing');
+        dom.cloudSyncStatus.classList.remove('success', 'error');
+        dom.cloudSyncStatus.innerHTML = '<i class="lucide-refresh-cw spin"></i> <span class="hide-mobile">SYNC...</span>';
+    }
+    if (isManual && dom.forceSyncBtn) {
+        dom.forceSyncBtn.innerHTML = '<i class="lucide-loader spin"></i> SINCRONIZANDO...';
+        dom.forceSyncBtn.disabled = true;
+    }
     
     try {
         const leadsToUpsert = state.leads.map(l => ({
@@ -1272,20 +1292,47 @@ async function syncToSupabase() {
             lng: l.lng || null,
             date: l.date,
             last_update: l.lastUpdate || null,
-            user_id: state.user.name // Identificar propietario en BBDD
+            user_id: state.user.name 
         }));
 
-        // Upsert masivo (Inserta si no existe, actualiza si existe, basado en la primary key 'id')
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('leads')
             .upsert(leadsToUpsert, { onConflict: 'id' });
 
-        if (error) {
-            console.error("Error sincronizando con Supabase (La tabla 'leads' debe existir):", error);
-        } else {
-            console.log("Backup en Supabase completado con éxito.");
+        if (error) throw error;
+
+        // Success
+        console.log("Backup en Supabase completado con éxito.");
+        if (dom.cloudSyncStatus) {
+            dom.cloudSyncStatus.classList.remove('syncing');
+            dom.cloudSyncStatus.classList.add('success');
+            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-check"></i> <span class="hide-mobile">NUBE OK</span>';
+            if (window.lucide) lucide.createIcons();
         }
+        
+        const now = new Date().toLocaleString();
+        if (dom.lastSyncText) dom.lastSyncText.innerText = "Última sincronización: " + now;
+        
+        if (isManual) alert("¡Sincronización exitosa con Supabase!");
+
     } catch (e) {
-        console.error("Excepción en sync Supabase:", e);
+        console.error("Error sincronizando con Supabase:", e);
+        if (dom.cloudSyncStatus) {
+            dom.cloudSyncStatus.classList.remove('syncing');
+            dom.cloudSyncStatus.classList.add('error');
+            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-off"></i> <span class="hide-mobile">ERROR</span>';
+            if (window.lucide) lucide.createIcons();
+        }
+        if (isManual) alert("Error al sincronizar: " + (e.message || "Problema de conexión"));
+    } finally {
+        if (isManual && dom.forceSyncBtn) {
+            dom.forceSyncBtn.innerHTML = '<i data-lucide="refresh-cw"></i> SINCRONIZAR AHORA CON SUPABASE';
+            dom.forceSyncBtn.disabled = false;
+            if (window.lucide) lucide.createIcons();
+        }
     }
+}
+
+async function forceSync() {
+    await syncToSupabase(true);
 }
