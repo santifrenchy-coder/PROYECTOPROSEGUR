@@ -99,9 +99,10 @@ function initDom() {
         modalAlarmCompany: document.getElementById('modal-alarm-company'),
         statusBtns: document.querySelectorAll('.status-btn-pick'),
         saveLeadBtn: document.getElementById('save-lead-btn'),
-        modalUpdated: document.getElementById('modal-updated'),
         modalInterestBadge: document.getElementById('modal-interest-badge'),
         modalStatusBadge: document.getElementById('modal-status-badge'),
+        modalCreated: document.getElementById('modal-created'),
+        modalUpdated: document.getElementById('modal-updated'),
         modalMapsLink: document.getElementById('modal-maps-link'),
         modalSector: document.getElementById('modal-sector'),
         deleteLeadBtn: document.getElementById('delete-lead-btn'),
@@ -525,6 +526,17 @@ function enterApp() {
     renderLeads();
 }
 
+// --- Utilidades ---
+function formatDate(dateStr) {
+    if (!dateStr || dateStr === '--') return dateStr;
+    // Si es formato ISO (YYYY-MM-DD), convertir a europeo (DD/MM/YYYY)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+    return dateStr;
+}
+
 // --- Lógica de Mapa ---
 function initMap() {
     try {
@@ -628,7 +640,6 @@ async function generateLeads(lat, lng, r) {
         <div style="grid-column: 1/-1; text-align: center; padding: 5rem 2rem;">
             <div class="radar-container">
                 <div class="radar-line" style="animation-duration: 1.5s;"></div>
-                <div class="radar-circle"></div>
                 <div class="radar-circle" style="animation-delay: 1s;"></div>
                 <div class="radar-point" style="top: 30%; left: 40%; animation: pointFlicker 0.5s infinite;"></div>
             </div>
@@ -891,6 +902,7 @@ function openLead(lead) {
     if(dom.modalRrss) dom.modalRrss.value = lead.rrss || "";
     if(dom.modalAlarmCompany) dom.modalAlarmCompany.value = lead.alarm || "NINGUNA";
     if(dom.modalSector) dom.modalSector.value = lead.sector || "";
+    if(dom.modalCreated) dom.modalCreated.innerText = formatDate(lead.date);
     dom.modalUpdated.innerText = lead.lastUpdate;
     
     // Color según interés en el modal
@@ -1111,7 +1123,7 @@ function exportToExcel() {
         "Potencial (%)": l.interest,
         "Estado Comercial": l.status.toUpperCase(),
         "Notas": l.services,
-        "Última Interacción": l.lastUpdate !== '--' ? l.lastUpdate : l.date
+        "Última Interacción": l.lastUpdate !== '--' ? l.lastUpdate : formatDate(l.date)
     }));
 
     try {
