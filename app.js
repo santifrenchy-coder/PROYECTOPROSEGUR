@@ -167,6 +167,7 @@ function initDom() {
         // Supabase Sync UI
         cloudSyncStatus: document.getElementById('cloud-sync-status'),
         forceSyncBtn: document.getElementById('force-sync-btn'),
+        downloadCloudBtn: document.getElementById('download-cloud-btn'),
         lastSyncText: document.getElementById('last-sync-text')
     };
 }
@@ -350,6 +351,7 @@ function setupEventListeners() {
     if (dom.restoreBackupBtn) dom.restoreBackupBtn.onclick = () => dom.importBackupInput && dom.importBackupInput.click();
     if (dom.importBackupInput) dom.importBackupInput.onchange = importFullBackup;
     if (dom.forceSyncBtn) dom.forceSyncBtn.onclick = forceSync;
+    if (dom.downloadCloudBtn) dom.downloadCloudBtn.onclick = downloadFromSupabase;
 
     // Search & Discovery
     if (dom.searchCityBtn) {
@@ -717,7 +719,7 @@ async function generateLeads(lat, lng, r) {
             services: "Puntos detectados por satélite: " + Object.keys(tags).length,
             lat: el.lat || (el.center ? el.center.lat : 0),
             lng: el.lon || (el.center ? el.center.lon : 0),
-            date: new Date().toLocaleDateString(),
+            date: new Date().toISOString().split('T')[0], // Formato ISO YYYY-MM-DD
             lastUpdate: '--'
         };
     });
@@ -1237,7 +1239,7 @@ function saveNewManualLead() {
         status: 'visita',
         lat,
         lng,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString().split('T')[0], // Formato ISO
         lastUpdate: new Date().toLocaleString()
     };
     
@@ -1353,4 +1355,74 @@ async function syncToSupabase(isManual = false) {
 
 async function forceSync() {
     await syncToSupabase(true);
+}
+
+async function downloadFromSupabase() {
+    if (!sb || !state.user) return alert("Supabase no está configurado o no has iniciado sesión.");
+    
+    if (dom.downloadCloudBtn) {
+        dom.downloadCloudBtn.innerHTML = '<i class="lucide-loader spin"></i> DESCARGANDO...';
+        dom.downloadCloudBtn.disabled = true;
+    }
+
+    try {
+        console.log("Descargando datos para el usuario:", state.user.name);
+        const { data, error } = await sb
+            .from('leads')
+            .select('*')
+            .eq('user_id', state.user.name);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            alert("No se han encontrado datos en la nube para este usuario.");
+        } else {
+            if (confirm(`Se han encontrado ${data.length} registros en la nube. ¿Deseas importarlos? (Se fusionarán con tus datos actuales evitando duplicados)`)) {
+                
+                data.forEach(cloudLead => {
+                    // Mapear de vuelta los campos si es necesario (ej: contact_name -> contactName)
+                    const mappedLead = {
+                        id: cloudLead.id,
+                        name: cloudLead.name,
+                        address: cloudLead.address,
+                        sector: cloudLead.sector,
+                        status: cloudLead.status,
+                        interest: cloudLead.interest,
+                        cif: cloudLead.cif,
+                        cp: cloudLead.cp,
+                        city: cloudLead.city,
+                        contactName: cloudLead.contact_name,
+                        phone: cloudLead.phone,
+                        email: cloudLead.email,
+                        rrss: cloudLead.rrss,
+                        alarm: cloudLead.alarm,
+                        services: cloudLead.services,
+                        lat: cloudLead.lat,
+                        lng: cloudLead.lng,
+                        date: cloudLead.date,
+                        lastUpdate: cloudLead.last_update
+                    };
+
+                    if (!state.leads.find(l => l.id === mappedLead.id)) {
+                        state.leads.push(mappedLead);
+                    }
+                });
+
+                saveToDisk();
+                renderLeads();
+                renderMapPins();
+                updateStats();
+                alert("¡Datos recuperados con éxito!");
+            }
+        }
+    } catch (e) {
+        console.error("Error descargando de Supabase:", e);
+        alert("Error al descargar datos: " + (e.message || "Problema de conexión"));
+    } finally {
+        if (dom.downloadCloudBtn) {
+            dom.downloadCloudBtn.innerHTML = '<i data-lucide="cloud-download"></i> DESCARGAR DATOS DE LA NUBE';
+            dom.downloadCloudBtn.disabled = false;
+            if (window.lucide) lucide.createIcons();
+        }
+    }
 }

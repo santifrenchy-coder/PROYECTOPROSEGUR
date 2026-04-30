@@ -326,7 +326,10 @@
                         <input type="file" id="import-backup-input" accept=".json" class="hidden">
                     </div>
                     <button id="force-sync-btn" class="btn-sync-now">
-                        <i data-lucide="refresh-cw"></i> SINCRONIZAR AHORA CON SUPABASE
+                        <i data-lucide="refresh-cw"></i> SUBIR DATOS A SUPABASE
+                    </button>
+                    <button id="download-cloud-btn" class="btn-sync-now" style="background: rgba(34, 197, 94, 0.1); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); margin-top: 0.5rem;">
+                        <i data-lucide="cloud-download"></i> DESCARGAR DATOS DE LA NUBE
                     </button>
                     <p id="last-sync-text" class="sync-status-text">Sin sincronizar</p>
                 </div>
@@ -557,7 +560,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="app.js?v=1.7"></script>
+    <script src="app.js?v=1.8"></script>
 
 </body>
 </html>
