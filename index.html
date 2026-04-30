@@ -8,7 +8,7 @@
     <!-- CSS & Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css?v=1.3">
+    <link rel="stylesheet" href="style.css?v=1.4">
     <style>
         .hidden { display: none !important; }
     </style>
@@ -557,38 +557,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="app.js?v=1.6"></script>
-    <script>
-        // Lógica de emergencia para los botones de Auth (Inline para evitar caché)
-        function setupAuthToggles() {
-            const loginFields = document.getElementById('login-fields');
-            const regFields = document.getElementById('reg-fields');
-            const showRegBtn = document.getElementById('show-reg-btn');
-            const showLoginLink = document.getElementById('show-login');
+    <script src="app.js?v=1.7"></script>
 
-            if (showRegBtn) {
-                showRegBtn.onclick = (e) => {
-                    e.preventDefault();
-                    loginFields.classList.add('hidden');
-                    regFields.classList.remove('hidden');
-                };
-            }
-            if (showLoginLink) {
-                showLoginLink.onclick = (e) => {
-                    e.preventDefault();
-                    regFields.classList.add('hidden');
-                    loginFields.classList.remove('hidden');
-                };
-            }
-        }
-
-        // Inicialización de iconos Lucide tras la carga de la página
-        window.addEventListener('load', () => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            setupAuthToggles();
-        });
-    </script>
 </body>
 </html>

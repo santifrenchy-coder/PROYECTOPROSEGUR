@@ -180,7 +180,7 @@ function bootstrapApp() {
         window.state = state;
         
         // Supabase
-        const supabaseLib = window.supabase || (typeof supabase !== 'undefined' && window.supabase !== supabase ? supabase : null);
+        const supabaseLib = window.supabase || (typeof supabase !== 'undefined' && (window.supabase !== supabase) ? supabase : null);
         if (supabaseLib && typeof supabaseLib.createClient === 'function') {
             sb = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY);
             console.log("✅ Supabase cliente inicializado.");
@@ -198,8 +198,12 @@ function bootstrapApp() {
     }
 }
 
-// Ejecutar inmediatamente (el script está al final del body)
-bootstrapApp();
+// Asegurar que el DOM está listo antes de arrancar (Crucial para Cloudflare)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrapApp);
+} else {
+    bootstrapApp();
+}
 
 function initAuth() {
     const savedUser = localStorage.getItem('pro_user');
@@ -211,8 +215,21 @@ function initAuth() {
 
 function setupEventListeners() {
     // Auth Toggles
-    if (dom.showRegBtn) dom.showRegBtn.onclick = (e) => { e.preventDefault(); dom.loginFields.classList.add('hidden'); dom.regFields.classList.remove('hidden'); };
-    if (dom.showLogin) dom.showLogin.onclick = (e) => { e.preventDefault(); dom.regFields.classList.add('hidden'); dom.loginFields.classList.remove('hidden'); };
+    // Auth Toggles (Login <-> Registro)
+    if (dom.showRegBtn) {
+        dom.showRegBtn.onclick = (e) => { 
+            e.preventDefault(); 
+            if (dom.loginFields) dom.loginFields.classList.add('hidden'); 
+            if (dom.regFields) dom.regFields.classList.remove('hidden'); 
+        };
+    }
+    if (dom.showLogin) {
+        dom.showLogin.onclick = (e) => { 
+            e.preventDefault(); 
+            if (dom.regFields) dom.regFields.classList.add('hidden'); 
+            if (dom.loginFields) dom.loginFields.classList.remove('hidden'); 
+        };
+    }
     
     if (dom.loginBtn) dom.loginBtn.addEventListener('click', handleLogin);
     if (dom.regBtn) dom.regBtn.addEventListener('click', handleRegister);
@@ -432,6 +449,7 @@ function validateEmail(email) {
 }
 
 function handleLogin() {
+    if (!dom.logName || !dom.logPass) return console.error("Elementos de login no encontrados");
     const email = dom.logName.value.trim();
     if (!email || !validateEmail(email)) return alert("Por favor, introduce un email corporativo válido.");
     state.user = { name: email, pass: dom.logPass.value };
@@ -440,6 +458,7 @@ function handleLogin() {
 }
 
 function handleRegister() {
+    if (!dom.regName || !dom.regPass) return console.error("Elementos de registro no encontrados");
     const email = dom.regName.value.trim();
     if (!email || !validateEmail(email)) return alert("Por favor, introduce un email corporativo válido.");
     state.user = { name: email, pass: dom.regPass.value };
