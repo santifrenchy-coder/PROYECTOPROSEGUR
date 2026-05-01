@@ -1304,7 +1304,7 @@ window.sendAIMessage = async () => {
     // Preparar payload
     const payload = {
         mode: "general_chat",
-        text: text,
+        message: text,
         lead: currentLead ? {
             name: currentLead.name,
             sector: currentLead.sector,
@@ -1340,7 +1340,7 @@ async function callAssistantAPI(payload) {
             return {
                 ok: true,
                 mode: "general_chat",
-                answer: "Respuesta simulada del Asistente IA. He recibido tu mensaje: \"" + payload.text + "\". En la fase real, aquí aparecerá la ayuda comercial basada en inteligencia artificial."
+                answer: "Respuesta simulada del Asistente IA. He recibido tu mensaje: \"" + payload.message + "\". En la fase real, aquí aparecerá la ayuda comercial basada en inteligencia artificial."
             };
         }
 
