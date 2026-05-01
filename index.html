@@ -316,7 +316,7 @@
                 <div class="profile-section" style="margin-top: 2.5rem;">
                     <div class="section-title"><i data-lucide="shield-check" style="width: 14px;"></i> SEGURIDAD Y BACKUP</div>
                     <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Descarga una copia de seguridad local con todos tus datos y fotos. Útil para restaurar si cambias de equipo o navegador.</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="grid-inputs-2col" style="margin-top: 1rem;">
                         <button id="download-backup-btn" class="btn btn-card-action" style="background: rgba(255,255,255,0.05); padding: 0.8rem; border: 1px solid var(--border);">
                             <i data-lucide="download"></i> COPIA SEGURIDAD
                         </button>
@@ -336,7 +336,7 @@
                 <div class="profile-section" style="margin-top: 2.5rem;">
                     <div class="section-title"><i data-lucide="database" style="width: 14px;"></i> CONEXIÓN AIRTABLE</div>
                     <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Configura la sincronización con tu base de datos externa para copias de seguridad automáticas.</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="grid-inputs-2col" style="margin-top: 1rem;">
                         <div class="input-group">
                             <label>Base ID</label>
                             <input type="text" id="air-base" placeholder="appXXXXXXXX">
@@ -371,7 +371,7 @@
                 </div>
             </div>
             
-            <div class="modal-layout" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+            <div class="modal-layout-grid">
                 <div class="modal-main-info">
                     <div class="info-section">
                         <h4>UBICACIÓN Y CONTACTO</h4>
@@ -379,7 +379,7 @@
                             <label>Dirección Completa</label>
                             <input type="text" id="modal-full-address" placeholder="Ej. Calle Mayor 1">
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                        <div class="grid-inputs-split-30">
                             <div class="input-group">
                                 <label>C.P.</label>
                                 <input type="text" id="modal-cp" placeholder="Código Postal">
@@ -389,7 +389,7 @@
                                 <input type="text" id="modal-city" placeholder="Ciudad">
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                        <div class="grid-inputs-2col">
                             <div class="input-group">
                                 <label>Teléfono Contacto</label>
                                 <input type="text" id="modal-phone" placeholder="Teléfono">
@@ -407,7 +407,7 @@
                     
                     <div class="info-section" style="margin-top: 1.5rem;">
                         <h4>IDENTIFICACIÓN FISCAL Y SOCIAL</h4>
-                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                        <div class="grid-inputs-split-70">
                             <div class="input-group">
                                 <label>Razón Social / Nombre Comercial</label>
                                 <input type="text" id="modal-business-name" placeholder="Nombre Oficial">
