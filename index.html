@@ -29,8 +29,8 @@
             
             <div id="login-fields" class="auth-fields">
                 <div class="login-minimal-group">
-                    <input type="email" id="log-name" placeholder="EMAIL CORPORATIVO">
-                    <input type="password" id="log-pass" placeholder="CONTRASEÑA">
+                    <input type="email" id="log-name" placeholder="EMAIL CORPORATIVO" autocomplete="email">
+                    <input type="password" id="log-pass" placeholder="CONTRASEÑA" autocomplete="current-password">
                 </div>
                 
                 <button id="login-btn" class="btn btn-primary btn-giant">ENTRAR AL SISTEMA</button>
@@ -43,8 +43,8 @@
 
             <div id="reg-fields" class="auth-fields hidden">
                 <div class="login-minimal-group">
-                    <input type="email" id="reg-name" placeholder="EMAIL CORPORATIVO">
-                    <input type="password" id="reg-pass" placeholder="CONTRASEÑA">
+                    <input type="email" id="reg-name" placeholder="EMAIL CORPORATIVO" autocomplete="email">
+                    <input type="password" id="reg-pass" placeholder="CONTRASEÑA" autocomplete="new-password">
                 </div>
                 <button id="reg-btn" class="btn btn-primary btn-giant">REGISTRARSE</button>
                 <div class="u-font-medium u-mt-2 u-opacity-05">
@@ -173,7 +173,7 @@
                         
                         <div class="premium-filters-container">
                             <div class="premium-filter-pill">
-                                <label>RADIO</label>
+                                <label for="radius-select">RADIO</label>
                                 <div class="pill-select-area">
                                     <i data-lucide="radio"></i>
                                     <select id="radius-select">
@@ -185,7 +185,7 @@
                                 </div>
                             </div>
                             <div class="premium-filter-pill">
-                                <label>SECTOR</label>
+                                <label for="sector-filter">SECTOR</label>
                                 <div class="pill-select-area">
                                     <i data-lucide="briefcase"></i>
                                     <select id="sector-filter">
@@ -200,7 +200,7 @@
                                 </div>
                             </div>
                             <div class="premium-filter-pill">
-                                <label>ESTADO</label>
+                                <label for="status-filter">ESTADO</label>
                                 <div class="pill-select-area">
                                     <i data-lucide="activity"></i>
                                     <select id="status-filter">
@@ -266,7 +266,7 @@
                 <div class="u-p-12 u-mb-15 glass-card">
                     <div class="u-flex-between u-gap-1 u-wrap">
                         <h2 class="u-font-large">HISTORIAL DE GESTIONES</h2>
-                        <select id="history-status-filter" class="tag-select u-max-w-200">
+                        <select id="history-status-filter" class="tag-select u-max-w-200" title="Filtrar por estado">
                             <option value="all">TODOS LOS ESTADOS</option>
                             <option value="visita">SOLO VISITAS</option>
                             <option value="seguimiento">SEGUIMIENTOS</option>
@@ -304,12 +304,12 @@
                 <div class="profile-section">
                     <div class="section-title"><i data-lucide="contact" class="u-icon-14"></i> INFORMACIÓN PERSONAL</div>
                     <div class="u-mb-15 input-group">
-                        <label>Email Corporativo</label>
+                        <label for="user-email-display">Email Corporativo</label>
                         <input type="email" id="user-email-display" readonly title="Email del usuario">
                     </div>
                     <div class="input-group">
-                        <label>Teléfono de Contacto</label>
-                        <input type="text" id="user-phone" placeholder="+34 600 000 000">
+                        <label for="user-phone">Teléfono de Contacto</label>
+                        <input type="text" id="user-phone" placeholder="+34 600 000 000" autocomplete="tel">
                     </div>
                 </div>
 
@@ -338,11 +338,11 @@
                     <p class="u-font-tiny u-opacity-05 u-mb-1">Configura la sincronización con tu base de datos externa para copias de seguridad automáticas.</p>
                     <div class="grid-inputs-2col u-mt-1">
                         <div class="input-group">
-                            <label>Base ID</label>
+                            <label for="air-base">Base ID</label>
                             <input type="text" id="air-base" placeholder="appXXXXXXXX">
                         </div>
                         <div class="input-group">
-                            <label>Token Secreto</label>
+                            <label for="air-token">Token Secreto</label>
                             <input type="password" id="air-token" placeholder="patXXXXXXXX">
                         </div>
                     </div>
@@ -376,31 +376,31 @@
                     <div class="info-section">
                         <h4>UBICACIÓN Y CONTACTO</h4>
                         <div class="u-mb-05 input-group">
-                            <label>Dirección Completa</label>
+                            <label for="modal-full-address">Dirección Completa</label>
                             <input type="text" id="modal-full-address" placeholder="Ej. Calle Mayor 1">
                         </div>
                         <div class="grid-inputs-split-30">
                             <div class="input-group">
-                                <label>C.P.</label>
+                                <label for="modal-cp">C.P.</label>
                                 <input type="text" id="modal-cp" placeholder="Código Postal">
                             </div>
                             <div class="input-group">
-                                <label>Población / Ciudad</label>
+                                <label for="modal-city">Población / Ciudad</label>
                                 <input type="text" id="modal-city" placeholder="Ciudad">
                             </div>
                         </div>
                         <div class="grid-inputs-2col">
                             <div class="input-group">
-                                <label>Teléfono Contacto</label>
+                                <label for="modal-phone">Teléfono Contacto</label>
                                 <input type="text" id="modal-phone" placeholder="Teléfono">
                             </div>
                             <div class="input-group">
-                                <label>Email Contacto</label>
+                                <label for="modal-email">Email Contacto</label>
                                 <input type="text" id="modal-email" placeholder="Email">
                             </div>
                         </div>
                         <div class="input-group">
-                            <label>Persona de Contacto</label>
+                            <label for="modal-contact-name">Persona de Contacto</label>
                             <input type="text" id="modal-contact-name" placeholder="Nombre de la persona">
                         </div>
                     </div>
@@ -409,23 +409,23 @@
                         <h4>IDENTIFICACIÓN FISCAL Y SOCIAL</h4>
                         <div class="grid-inputs-split-70">
                             <div class="input-group">
-                                <label>Razón Social / Nombre Comercial</label>
+                                <label for="modal-business-name">Razón Social / Nombre Comercial</label>
                                 <input type="text" id="modal-business-name" placeholder="Nombre Oficial">
                             </div>
                             <div class="input-group">
-                                <label>CIF / NIF</label>
+                                <label for="modal-cif">CIF / NIF</label>
                                 <input type="text" id="modal-cif" placeholder="CIF / NIF">
                             </div>
                         </div>
                         <div class="input-group">
-                            <label>Redes Sociales / Sitio Web</label>
+                            <label for="modal-rrss">Redes Sociales / Sitio Web</label>
                             <div class="u-flex-center u-gap-05">
                                 <i data-lucide="instagram" class="u-icon-18 u-color-muted"></i>
                                 <input type="text" id="modal-rrss" placeholder="@usuario o sitio web">
                             </div>
                         </div>
                         <div class="input-group">
-                            <label>Actividad / Sector</label>
+                            <label for="modal-sector">Actividad / Sector</label>
                             <input type="text" id="modal-sector" placeholder="Ej: Restaurante, Farmacia, Clínica...">
                         </div>
                     </div>
@@ -433,7 +433,7 @@
                     <div class="info-section u-mt-15">
                         <h4>ANÁLISIS DE COMPETENCIA Y NOTAS</h4>
                         <div class="u-mb-05">
-                            <label class="u-font-tiny u-text-uppercase u-color-yellow u-bold">Compañía de Alarma Actual</label>
+                            <label for="modal-alarm-company" class="u-font-tiny u-text-uppercase u-color-yellow u-bold">Compañía de Alarma Actual</label>
                             <select id="modal-alarm-company" class="u-bold u-mt-05 u-rounded-1 u-color-white u-w-full u-p-08-1 u-bg-glass-button-02" title="Compañía de Alarma Actual">
                                 <option value="NINGUNA" class="u-bg-dark">Ninguna / Desconocida</option>
                                 <option value="PROSEGUR" class="u-bg-dark">Movistar Prosegur Alarmas</option>
@@ -445,7 +445,7 @@
                                 <option value="OTROS" class="u-bg-dark">Otros Locales / Regionales</option>
                             </select>
                         </div>
-                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05"></textarea>
+                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05" title="Observaciones adicionales"></textarea>
                     </div>
                 </div>
                 
@@ -480,9 +480,9 @@
             <h2 class="u-mb-05">Limpiar Registros</h2>
             <p class="u-font-small u-opacity-06 u-mb-15">Selecciona el periodo a eliminar de tu base de datos local.</p>
             <div class="u-text-left u-p-12 u-mb-15 u-flex-column u-gap-1 u-bg-glass-card-02">
-                <label class="u-cursor-pointer u-bold"><input type="radio" name="delete-period" value="today" checked> GESTIONES DE HOY</label>
-                <label class="u-cursor-pointer u-bold"><input type="radio" name="delete-period" value="week"> ESTA SEMANA</label>
-                <label class="u-cursor-pointer u-color-danger u-bold"><input type="radio" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
+                <label for="delete-today" class="u-cursor-pointer u-bold"><input type="radio" id="delete-today" name="delete-period" value="today" checked> GESTIONES DE HOY</label>
+                <label for="delete-week" class="u-cursor-pointer u-bold"><input type="radio" id="delete-week" name="delete-period" value="week"> ESTA SEMANA</label>
+                <label for="delete-all" class="u-cursor-pointer u-color-danger u-bold"><input type="radio" id="delete-all" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
             </div>
             <div class="u-flex u-gap-08">
                 <button id="cancel-delete-btn" class="btn btn-full u-bg-glass-button">CANCELAR</button>
@@ -503,11 +503,11 @@
             
             <div class="modal-body">
                 <div class="input-group u-mb-15">
-                    <label>Nombre del Negocio</label>
+                    <label for="add-lead-name">Nombre del Negocio</label>
                     <input type="text" id="add-lead-name" placeholder="Ej: Cafetería Central">
                 </div>
                 <div class="input-group u-mb-2">
-                    <label>Sector / Actividad</label>
+                    <label for="add-lead-sector">Sector / Actividad</label>
                     <input type="text" id="add-lead-sector" placeholder="Ej: Restaurante, Clínica...">
                 </div>
                 
@@ -530,6 +530,7 @@
                     Introduce tu email corporativo para recibir un enlace de restauración.
                 </p>
                 <div class="login-minimal-group u-mb-15">
+                    <label for="forgot-email" class="hidden">Email</label>
                     <input type="email" id="forgot-email" placeholder="tu-email@prosegur.com" class="u-font-medium u-p-1">
                 </div>
                 <button id="send-reset-btn" class="btn btn-primary btn-full">ENVIAR ENLACE</button>
