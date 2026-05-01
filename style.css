@@ -752,6 +752,42 @@ input[readonly] {
 .map-dot-2 { top: 40%; left: 80%; animation-delay: 2.1s; }
 .map-dot-3 { top: 60%; left: 70%; animation-delay: 1.2s; }
 
+/* Final App.js Cleanup Utilities */
+.u-grid-full { grid-column: 1 / -1 !important; }
+.u-p-5-2 { padding: 5rem 2rem !important; }
+.u-p-4-2 { padding: 4rem 2rem !important; }
+.u-anim-1-5 { animation-duration: 1.5s !important; }
+.u-anim-delay-1 { animation-delay: 1s !important; }
+.u-ls-3 { letter-spacing: 3px !important; }
+.u-fw-800 { font-weight: 800 !important; }
+.u-fs-0-65 { font-size: 0.65rem !important; }
+.u-fs-0-7 { font-size: 0.7rem !important; }
+.u-fs-0-75 { font-size: 0.75rem !important; }
+.u-fs-0-8 { font-size: 0.8rem !important; }
+.u-icon-12 { width: 12px !important; height: 12px !important; }
+.u-icon-14 { width: 14px !important; height: 14px !important; }
+.u-w-100-h-100 { width: 100px !important; height: 100px !important; }
+.u-mb-0-2 { margin-bottom: 0.2rem !important; }
+.u-mb-1-5 { margin-bottom: 1.5rem !important; }
+.u-mt-10px { margin-top: 10px !important; }
+.u-gap-0-5 { gap: 0.5rem !important; }
+.u-gap-0-8 { gap: 0.8rem !important; }
+.u-grid-2col-08 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0.8rem !important; }
+.u-flex-center-gap-05 { display: flex !important; align-items: center !important; gap: 0.5rem !important; }
+.u-btn-google-maps { background: #003399 !important; color: white !important; border: none !important; padding: 8px 12px !important; border-radius: 2rem !important; font-weight: 800 !important; cursor: pointer !important; width: 100% !important; }
+.u-point-flicker { top: 30% !important; left: 40% !important; animation: pointFlicker 0.5s infinite !important; }
+
+/* Interest Level Classes for Dynamic Cards */
+.interest-level-muted { color: #94a3b8 !important; border-color: rgba(148, 163, 184, 0.2) !important; }
+.interest-level-green { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.2) !important; }
+.interest-level-gold { color: var(--primary-yellow) !important; border-color: rgba(254, 208, 0, 0.2) !important; }
+.interest-level-red { color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+
+.progress-fill.muted { background: #94a3b8 !important; box-shadow: 0 0 10px rgba(148, 163, 184, 0.3) !important; }
+.progress-fill.green { background: #22c55e !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important; }
+.progress-fill.gold { background: var(--primary-yellow) !important; box-shadow: 0 0 10px rgba(254, 208, 0, 0.3) !important; }
+.progress-fill.red { background: #ef4444 !important; box-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important; }
+
 /* Final cleanup classes */
 .u-bg-google { background: #4285F4 !important; color: white !important; }
 .u-bg-red-dim { background: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }

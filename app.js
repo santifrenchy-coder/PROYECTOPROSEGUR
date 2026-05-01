@@ -318,14 +318,20 @@ function setupEventListeners() {
         dom.userDisplay.onclick = (e) => {
             e.stopPropagation();
             if (dom.userDropdown) dom.userDropdown.classList.toggle('active');
-            if (dom.dropdownBackdrop) dom.dropdownBackdrop.style.display = (dom.userDropdown && dom.userDropdown.classList.contains('active')) ? 'block' : 'none';
+            if (dom.dropdownBackdrop) {
+                if (dom.userDropdown && dom.userDropdown.classList.contains('active')) {
+                    dom.dropdownBackdrop.classList.remove('hidden');
+                } else {
+                    dom.dropdownBackdrop.classList.add('hidden');
+                }
+            }
         };
     }
     
     if (dom.dropdownBackdrop) {
         dom.dropdownBackdrop.onclick = () => {
             if (dom.userDropdown) dom.userDropdown.classList.remove('active');
-            dom.dropdownBackdrop.style.display = 'none';
+            dom.dropdownBackdrop.classList.add('hidden');
         };
     }
 
@@ -340,7 +346,7 @@ function setupEventListeners() {
             if (dom.airBase) dom.airBase.value = state.config.base || '';
             if (dom.airToken) dom.airToken.value = state.config.token || '';
             if (dom.userDropdown) dom.userDropdown.classList.remove('active');
-            if (dom.dropdownBackdrop) dom.dropdownBackdrop.style.display = 'none';
+            if (dom.dropdownBackdrop) dom.dropdownBackdrop.classList.add('hidden');
         };
     }
 
@@ -498,7 +504,7 @@ function handleLogout() {
 
 function enterApp() {
     dom.loginScreen.classList.remove('active');
-    dom.dashboardScreen.style.display = 'block';
+    dom.dashboardScreen.classList.remove('hidden');
     dom.displayName.innerText = state.user.name;
     
     // Cargar datos
@@ -633,18 +639,18 @@ async function onLocalSuccess(lat, lng, triggerSearch = true) {
 
 // --- Motor de Búsqueda (Overpass Fix) ---
 async function generateLeads(lat, lng, r) {
-    if (dom.emptyExploration) dom.emptyExploration.style.display = 'none';
+    if (dom.emptyExploration) dom.emptyExploration.classList.add('hidden');
     
     // UI de Escaneo Activo
     dom.leadsContainer.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 5rem 2rem;">
+        <div class="u-grid-full u-text-center u-p-5-2">
             <div class="radar-container">
-                <div class="radar-line" style="animation-duration: 1.5s;"></div>
-                <div class="radar-circle" style="animation-delay: 1s;"></div>
-                <div class="radar-point" style="top: 30%; left: 40%; animation: pointFlicker 0.5s infinite;"></div>
+                <div class="radar-line u-anim-1-5"></div>
+                <div class="radar-circle u-anim-delay-1"></div>
+                <div class="radar-point u-point-flicker"></div>
             </div>
-            <h3 class="btn-pulse" style="color: var(--primary-yellow); letter-spacing: 3px;">ESCANEANDO ZONA...</h3>
-            <p id="scan-status" style="margin-top: 1rem; font-size: 0.8rem; font-weight: 800; color: var(--text-muted);">Sincronizando con satélites...</p>
+            <h3 class="btn-pulse u-color-yellow u-ls-3">ESCANEANDO ZONA...</h3>
+            <p id="scan-status" class="u-mt-1 u-fs-0-8 u-fw-800 u-color-muted">Sincronizando con satélites...</p>
         </div>`;
 
     const statusMsg = document.getElementById('scan-status');
@@ -688,12 +694,12 @@ async function generateLeads(lat, lng, r) {
 
     if (!data || !data.elements || data.elements.length === 0) {
         dom.leadsContainer.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem;">
-                <div class="radar-container" style="width: 100px; height: 100px; margin-bottom: 1.5rem; opacity: 0.5;">
+            <div class="u-grid-full u-text-center u-p-4-2">
+                <div class="radar-container u-w-100-h-100 u-mb-1-5 u-opacity-05">
                     <div class="radar-line"></div>
                 </div>
-                <h3 style="color: var(--danger);">SIN RESULTADOS</h3>
-                <p style="opacity: 0.6;">No hemos detectado negocios en esta zona exacta. Prueba a aumentar el radio o moverte.</p>
+                <h3 class="u-color-danger">SIN RESULTADOS</h3>
+                <p class="u-opacity-06">No hemos detectado negocios en esta zona exacta. Prueba a aumentar el radio o moverte.</p>
             </div>`;
         lucide.createIcons();
         return;
@@ -777,14 +783,14 @@ function renderLeads() {
     dom.leadsGridHistory.innerHTML = '';
 
     if (filtered.length > 0) {
-        if (dom.emptyExploration) dom.emptyExploration.style.display = 'none';
+        if (dom.emptyExploration) dom.emptyExploration.classList.add('hidden');
         filtered.forEach(lead => {
             const card = createLeadCard(lead);
             // El botón 'DETALLES' ya maneja la apertura, evitamos clics accidentales al hacer scroll
             dom.leadsContainer.appendChild(card);
         });
     } else {
-        if (dom.emptyExploration) dom.emptyExploration.style.display = 'block';
+        if (dom.emptyExploration) dom.emptyExploration.classList.remove('hidden');
     }
 
     // Render Historial con su propio filtro
@@ -804,18 +810,18 @@ function createLeadCard(lead) {
     const div = document.createElement('div');
     div.className = 'lead-card-premium';
     
-    // Color según interés
-    let interestColor = '#94a3b8'; // Muted
-    if (lead.interest >= 70) interestColor = '#22c55e'; // Green
-    if (lead.interest >= 85) interestColor = 'var(--primary-yellow)'; // Gold
-    if (lead.interest >= 95) interestColor = '#ef4444'; // Red
+    // Clase según interés
+    let intClass = 'muted';
+    if (lead.interest >= 70) intClass = 'green';
+    if (lead.interest >= 85) intClass = 'gold';
+    if (lead.interest >= 95) intClass = 'red';
 
     div.innerHTML = `
         <div class="card-header-flex">
             <div class="lead-info-top">
-                <h3 class="lead-name-premium" style="margin-bottom: 0.2rem;">${lead.name}</h3>
-                <p class="lead-sector-premium" style="font-size: 0.65rem; color: var(--text-muted); font-weight: 800;">
-                    <i data-lucide="briefcase" style="width: 12px; height: 12px;"></i> ${lead.sector.toUpperCase()}
+                <h3 class="lead-name-premium u-mb-0-2">${lead.name}</h3>
+                <p class="lead-sector-premium u-fs-0-65 u-color-muted u-fw-800">
+                    <i data-lucide="briefcase" class="u-icon-12"></i> ${lead.sector.toUpperCase()}
                 </p>
             </div>
             <span class="badge-status-premium ${lead.status}">
@@ -825,24 +831,24 @@ function createLeadCard(lead) {
         
         <div class="interest-progress-wrapper">
             <div class="interest-label-flex">
-                <span style="color: ${interestColor}">POTENCIAL COMERCIAL</span>
+                <span class="interest-level-${intClass}">POTENCIAL COMERCIAL</span>
                 <span>${lead.interest}%</span>
             </div>
             <div class="progress-track">
-                <div class="progress-fill" style="width: ${lead.interest}%; background: ${interestColor}; box-shadow: 0 0 10px ${interestColor}44;"></div>
+                <div class="progress-fill ${intClass}" style="width: ${lead.interest}%;"></div>
             </div>
         </div>
         
-        <p class="lead-address-premium" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i> ${lead.address}
+        <p class="lead-address-premium u-fs-0-75 u-color-muted u-mb-1-5 u-flex-center-gap-05">
+            <i data-lucide="map-pin" class="u-icon-14"></i> ${lead.address}
         </p>
         
-        <div class="card-actions-premium" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
-            <button class="btn btn-outline" style="padding: 0.6rem; font-size: 0.7rem;" onclick="window.openLeadByID('${lead.id}')">
-                <i data-lucide="info" style="width: 14px;"></i> DETALLES
+        <div class="card-actions-premium u-grid-2col-08">
+            <button class="btn btn-outline u-fs-0-7 u-p-08" onclick="window.openLeadByID('${lead.id}')">
+                <i data-lucide="info" class="u-icon-14"></i> DETALLES
             </button>
-            <button class="btn btn-primary" style="padding: 0.6rem; font-size: 0.7rem;" onclick="window.open('https://www.google.com/maps?q=${lead.lat},${lead.lng}', '_blank')">
-                <i data-lucide="navigation" style="width: 14px;"></i> MAPS
+            <button class="btn btn-primary u-fs-0-7 u-p-08" onclick="window.open('https://www.google.com/maps?q=${lead.lat},${lead.lng}', '_blank')">
+                <i data-lucide="navigation" class="u-icon-14"></i> MAPS
             </button>
         </div>
     `;
@@ -876,10 +882,10 @@ function renderMapPins() {
         });
         
         pin.bindPopup(`
-            <div style="text-align: center; color: var(--bg-dark);">
-                <b style="font-size: 1rem;">${l.name}</b><br>
-                <span style="font-size: 0.8rem;">Potencial: ${l.interest}%</span><br>
-                <button onclick="window.openLeadByID('${l.id}')" style="margin-top: 10px; background: #003399; color: white; border: none; padding: 8px 12px; border-radius: 2rem; font-weight: 800; cursor: pointer; width: 100%;">GESTIONAR</button>
+            <div class="u-text-center u-color-dark">
+                <b class="u-fs-1">${l.name}</b><br>
+                <span class="u-fs-0-8">Potencial: ${l.interest}%</span><br>
+                <button onclick="window.openLeadByID('${l.id}')" class="u-mt-10px u-btn-google-maps">GESTIONAR</button>
             </div>
         `);
         markersLayer.addLayer(pin);
@@ -905,15 +911,14 @@ function openLead(lead) {
     if(dom.modalCreated) dom.modalCreated.innerText = formatDate(lead.date);
     dom.modalUpdated.innerText = lead.lastUpdate;
     
-    // Color según interés en el modal
-    let interestColor = '#94a3b8';
-    if (lead.interest >= 70) interestColor = '#22c55e';
-    if (lead.interest >= 85) interestColor = 'var(--primary-yellow)';
-    if (lead.interest >= 95) interestColor = '#ef4444';
+    // Clase según interés en el modal
+    let intClass = 'muted';
+    if (lead.interest >= 70) intClass = 'green';
+    if (lead.interest >= 85) intClass = 'gold';
+    if (lead.interest >= 95) intClass = 'red';
     
     dom.modalInterestBadge.innerText = lead.interest + '%';
-    dom.modalInterestBadge.style.color = interestColor;
-    dom.modalInterestBadge.style.borderColor = interestColor + '44'; // 44 es opacidad en hex
+    dom.modalInterestBadge.className = 'u-static u-font-medium badge-interest interest-level-' + intClass;
 
     dom.modalStatusBadge.innerText = lead.status === 'descartado' ? 'DESCARTADO' : lead.status.toUpperCase();
     dom.modalStatusBadge.className = 'badge-status-premium ' + lead.status;
