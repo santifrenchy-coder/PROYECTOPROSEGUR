@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EXPLORADOR PRO | Movistar Prosegur Alarmas</title>
     
     <!-- CSS & Fonts -->
@@ -305,7 +305,7 @@
                     <div class="section-title"><i data-lucide="contact" style="width: 14px;"></i> INFORMACIÓN PERSONAL</div>
                     <div class="input-group" style="margin-bottom: 1.2rem;">
                         <label>Email Corporativo</label>
-                        <input type="email" id="user-email-display" readonly>
+                        <input type="email" id="user-email-display" readonly title="Email del usuario">
                     </div>
                     <div class="input-group">
                         <label>Teléfono de Contacto</label>
@@ -364,7 +364,7 @@
         <div class="modal-card full">
             <span class="modal-close" id="close-modal">&times;</span>
             <div class="modal-header-lead" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-                <input type="text" id="modal-title-input" style="font-size: 1.6rem; font-weight: 800; border: none; background: none; color: var(--primary-yellow); width: 80%;">
+                <input type="text" id="modal-title-input" style="font-size: 1.6rem; font-weight: 800; border: none; background: none; color: var(--primary-yellow); width: 80%;" title="Nombre del Prospecto">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span id="modal-status-badge" class="badge-status-premium">ESTADO</span>
                     <span id="modal-interest-badge" class="badge-interest" style="position: static; font-size: 1rem;">--%</span>
@@ -434,7 +434,7 @@
                         <h4>ANÁLISIS DE COMPETENCIA Y NOTAS</h4>
                         <div style="margin-bottom: 0.5rem;">
                             <label style="font-size: 0.65rem; color: var(--primary-yellow); font-weight: 800; text-transform: uppercase;">Compañía de Alarma Actual</label>
-                            <select id="modal-alarm-company" style="margin-top: 0.2rem; width: 100%; padding: 0.8rem 1rem; border-radius: 1rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: white; font-weight: 600;">
+                            <select id="modal-alarm-company" style="margin-top: 0.2rem; width: 100%; padding: 0.8rem 1rem; border-radius: 1rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: white; font-weight: 600;" title="Compañía de Alarma Actual">
                                 <option value="NINGUNA" style="background: var(--bg-dark);">Ninguna / Desconocida</option>
                                 <option value="PROSEGUR" style="background: var(--bg-dark);">Movistar Prosegur Alarmas</option>
                                 <option value="SECURITAS" style="background: var(--bg-dark);">Securitas Direct</option>
