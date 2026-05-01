@@ -1011,7 +1011,14 @@ function saveToDisk() {
     try {
         localStorage.setItem('pro_leads_' + state.user.name, JSON.stringify(state.leads));
         console.log("Datos guardados correctamente: " + state.leads.length + " prospectos.");
-        syncToSupabase(); // Sincronización en la nube (Offline-first / Backup)
+        
+        // Actualizar indicador a PENDIENTE (Recordatorio para el usuario)
+        if (dom.cloudSyncStatus) {
+            dom.cloudSyncStatus.classList.remove('success', 'syncing', 'error');
+            dom.cloudSyncStatus.classList.add('pending');
+            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-off"></i> <span class="hide-mobile">PENDIENTE</span>';
+            if (window.lucide) lucide.createIcons();
+        }
     } catch (e) {
         console.error("Error crítico de guardado:", e);
         alert("¡ATENCIÓN! No se han podido guardar los datos en el navegador. Por favor, descarga un Backup inmediatamente para no perder tu trabajo.");
@@ -1336,9 +1343,9 @@ async function syncToSupabase(isManual = false) {
         // Success
         console.log("Backup en Supabase completado con éxito.");
         if (dom.cloudSyncStatus) {
-            dom.cloudSyncStatus.classList.remove('syncing');
+            dom.cloudSyncStatus.classList.remove('syncing', 'pending', 'error');
             dom.cloudSyncStatus.classList.add('success');
-            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-check"></i> <span class="hide-mobile">NUBE OK</span>';
+            dom.cloudSyncStatus.innerHTML = '<i data-lucide="cloud-check"></i> <span class="hide-mobile">SINCRO</span>';
             if (window.lucide) lucide.createIcons();
         }
         

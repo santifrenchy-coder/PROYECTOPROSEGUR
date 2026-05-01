@@ -155,7 +155,7 @@ body {
 .field label { display: block; font-size: 0.65rem; font-weight: 900; color: var(--primary-yellow); margin-bottom: 0.5rem; text-transform: uppercase; }
 select { 
     width: 100%; padding: 0.8rem 1.1rem; border-radius: 1rem; border: 1px solid var(--border);
-    background: rgba(15, 23, 42, 0.6); color: white; font-weight: 700; -webkit-appearance: none;
+    background: rgba(15, 23, 42, 0.6); color: white; font-weight: 700; appearance: none; -webkit-appearance: none;
 }
 select option {
     background-color: var(--bg-dark);
@@ -396,9 +396,17 @@ input[readonly] {
 
 /* Cards Premium Plus */
 .lead-card-premium {
-    background: var(--bg-card); border: 1px solid var(--border); border-radius: 2rem;
-    padding: 1.8rem; position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: hidden; animation: cardSlideUp 0.5s ease-out backwards;
+    background: var(--bg-card); 
+    border: 1px solid var(--border); 
+    border-radius: 1.5rem;
+    padding: 1.5rem; 
+    position: relative; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden; 
+    animation: cardSlideUp 0.5s ease-out backwards;
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem;
 }
 @keyframes cardSlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
@@ -406,6 +414,7 @@ input[readonly] {
     transform: translateY(-8px) scale(1.02);
     border-color: var(--primary-yellow);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(254, 208, 0, 0.1);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .interest-progress-wrapper { margin: 1.2rem 0; }
@@ -540,26 +549,13 @@ input[readonly] {
     animation: spin 1s ease-in-out infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
 
-.modal-card.mini {
-    max-width: 400px;
-}
 
-/* Lead Cards Premium */
-.lead-card-premium {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 1.5rem; padding: 1.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex; flex-direction: column; gap: 1rem; position: relative; overflow: hidden;
-}
-.lead-card-premium:hover {
-    background: rgba(255,255,255,0.05); border-color: var(--primary-yellow);
-    transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
 
-.card-header-flex { display: flex; justify-content: space-between; align-items: center; }
+
+/* Lead Cards Content Layout */
+
+
 
 .badge-interest-premium {
     padding: 0.3rem 0.8rem; border-radius: 2rem; font-weight: 900; font-size: 0.8rem;
@@ -606,6 +602,11 @@ input[readonly] {
     color: var(--primary-yellow);
     border-color: var(--primary-yellow);
     animation: syncPulse 1.5s infinite;
+}
+
+.cloud-sync-indicator.pending {
+    color: #f97316; /* Naranja fuerte */
+    border-color: rgba(249, 115, 22, 0.4);
 }
 
 .cloud-sync-indicator.success {
