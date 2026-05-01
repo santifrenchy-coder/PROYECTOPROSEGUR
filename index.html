@@ -24,7 +24,7 @@
             <div class="logo-area">
                 <img src="logo.png" alt="Prosegur" class="brand-logo-main">
                 <h1>EXPLORADOR <span class="accent-text">PRO</span></h1>
-                <p style="font-size: 0.6rem; opacity: 0.6; margin-top: 0.5rem; letter-spacing: 2px;">ACCESO COMERCIAL PROFESIONAL</p>
+                <p class="u-mt-05 u-opacity-06 u-font-tiny u-tracking-wider u-text-uppercase">ACCESO COMERCIAL PROFESIONAL</p>
             </div>
             
             <div id="login-fields" class="auth-fields">
@@ -47,21 +47,21 @@
                     <input type="password" id="reg-pass" placeholder="CONTRASEÑA">
                 </div>
                 <button id="reg-btn" class="btn btn-primary btn-giant">REGISTRARSE</button>
-                <div style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
-                    <p>¿YA TIENES CUENTA? <a href="#" id="show-login" style="color: var(--primary-yellow); font-weight: 800; text-decoration: none;">INICIAR SESIÓN</a></p>
+                <div class="u-font-medium u-mt-2 u-opacity-05">
+                    <p>¿YA TIENES CUENTA? <a href="#" id="show-login" class="u-color-yellow u-no-decoration u-bold">INICIAR SESIÓN</a></p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main App -->
-    <div id="dashboard-screen" class="app-container" style="display: none;">
+    <div id="dashboard-screen" class="u-hidden app-container">
         <!-- Navbar -->
         <header class="navbar">
             <div class="nav-left">
                 <img src="logo.png" alt="Logo" class="nav-logo-img">
-                <div class="nav-titles" style="margin-left: 10px;">
-                    <span class="brand-name">EXPLORADOR <span style="color: var(--primary-yellow)">PRO</span></span>
+                <div class="nav-titles u-ml-10">
+                    <span class="brand-name">EXPLORADOR <span class="u-color-yellow">PRO</span></span>
                     <span class="app-tag">MOVISTAR PROSEGUR ALARMAS</span>
                 </div>
             </div>
@@ -86,13 +86,13 @@
                     
                     <div class="profile-badge" id="user-display">
                         <span id="display-name">USUARIO</span>
-                        <i data-lucide="chevron-down" style="width: 14px; opacity: 0.6;"></i>
+                        <i data-lucide="chevron-down" class="u-icon-14 u-opacity-06"></i>
                         
                         <div id="user-dropdown" class="dropdown-content">
-                            <div style="font-size: 0.6rem; font-weight: 900; color: var(--primary-yellow); margin-bottom: 0.5rem; opacity: 0.5;">MI PERFIL</div>
+                            <div class="u-font-tiny u-color-yellow u-bold u-mb-05 u-opacity-05">MI PERFIL</div>
                             <button id="open-config"><i data-lucide="settings"></i> Ajustes</button>
-                            <hr style="margin: 0.5rem 0; opacity: 0.1;">
-                            <button id="logout-btn" style="color: var(--danger);"><i data-lucide="log-out"></i> Salir</button>
+                            <hr class="u-opacity-05 u-m-05-0">
+                            <button id="logout-btn" class="u-color-danger"><i data-lucide="log-out"></i> Salir</button>
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
             <button class="tab-link" data-tab="leads-list"><i data-lucide="list"></i> HISTORIAL</button>
         </nav>
 
-        <div id="dropdown-backdrop" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.2);"></div>
+        <div id="dropdown-backdrop" class="u-hidden u-backdrop-dim"></div>
 
         <!-- Content Area -->
         <main class="main-content">
@@ -115,31 +115,31 @@
             <!-- Tab 1: Dashboard Stats -->
             <section id="stats-tab" class="tab-pane active">
                 <div class="glass-card">
-                    <h2 style="margin-bottom: 0.5rem;">Panel de Actividad</h2>
-                    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.5rem;">Resumen de tu gestión comercial actual.</p>
+            <h2 class="u-mb-05">Panel de Actividad</h2>
+                    <p class="u-color-muted u-font-small u-mb-15">Resumen de tu gestión comercial actual.</p>
                     <div class="stats-grid">
                         <div class="stat-box">
                             <span class="stat-val" id="stat-total">0</span>
                             <span class="stat-label">Prospectos</span>
                         </div>
                         <div class="stat-box highlight">
-                            <span class="stat-val" id="stat-high" style="color: var(--primary-yellow);">0</span>
+                            <span class="u-color-yellow stat-val" id="stat-high">0</span>
                             <span class="stat-label">Interés Alto</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-val" id="stat-seguimiento" style="color: #60a5fa;">0</span>
+                            <span class="u-color-blue stat-val" id="stat-seguimiento">0</span>
                             <span class="stat-label">Seguimientos</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-val" id="stat-visita" style="color: #fb923c;">0</span>
+                            <span class="u-text-orange stat-val" id="stat-visita">0</span>
                             <span class="stat-label">Visitas Pend.</span>
                         </div>
                         <div class="stat-box success">
-                            <span class="stat-val" id="stat-firmado" style="color: var(--success);">0</span>
+                            <span class="u-color-success stat-val" id="stat-firmado">0</span>
                             <span class="stat-label">Firmados</span>
                         </div>
                         <div class="stat-box danger">
-                            <span class="stat-val" id="stat-descartado" style="color: var(--danger);">0</span>
+                            <span class="u-color-danger stat-val" id="stat-descartado">0</span>
                             <span class="stat-label">Descartados</span>
                         </div>
                     </div>
@@ -151,11 +151,11 @@
                 <div class="exploration-header">
                     <div class="header-main">
                         <div>
-                            <h2 style="letter-spacing: 2px; font-weight: 900;">CENTRO DE EXPLORACIÓN</h2>
-                            <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 1px;">Detectando oportunidades de negocio en tiempo real</p>
+                            <h2 class="u-tracking-wider u-bold">CENTRO DE EXPLORACIÓN</h2>
+                            <p class="u-font-tiny u-mt-05 u-text-uppercase u-opacity-06 u-tracking-wide">Detectando oportunidades de negocio en tiempo real</p>
                         </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button id="search-city-btn" class="btn btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow); padding: 0 1rem;" title="Ir a otra calle o ciudad">
+                        <div class="u-flex-center u-gap-05">
+                            <button id="search-city-btn" class="u-color-yellow btn btn-glass u-border-yellow-p-1" title="Ir a otra calle o ciudad">
                                 <i data-lucide="search"></i> <span class="hide-mobile">IR A CALLE</span>
                             </button>
                             <button id="geo-btn" class="btn btn-primary btn-radar">
@@ -225,12 +225,12 @@
                             <div class="radar-circle"></div>
                             <div class="radar-circle"></div>
                             <!-- Simulated detection points -->
-                            <div class="radar-point" style="top: 20%; left: 30%; animation-delay: 0.5s;"></div>
-                            <div class="radar-point" style="top: 60%; left: 70%; animation-delay: 1.2s;"></div>
-                            <div class="radar-point" style="top: 40%; left: 80%; animation-delay: 2.1s;"></div>
+                            <div class="radar-point map-dot-1"></div>
+                            <div class="radar-point map-dot-3"></div>
+                            <div class="radar-point map-dot-2"></div>
                         </div>
-                        <h3 style="color: white; opacity: 0.8;">ESCANER TÁCTICO LISTO</h3>
-                        <p style="max-width: 300px; margin: 1rem auto; line-height: 1.6;">Inicia el reconocimiento de zona para detectar oportunidades de negocio en tiempo real.</p>
+                        <h3 class="u-color-white u-opacity-08">ESCANER TÁCTICO LISTO</h3>
+                        <p class="u-lh-16 u-max-w-300">Inicia el reconocimiento de zona para detectar oportunidades de negocio en tiempo real.</p>
                     </div>
 
                     <div id="leads-container" class="leads-grid-premium"></div>
@@ -241,7 +241,7 @@
             <section id="map-history-tab" class="tab-pane">
                 <div class="map-controls-top">
                     <button id="reset-map-btn" class="btn-glass"><i data-lucide="crosshair"></i> CENTRADO GPS</button>
-                    <button id="force-gps-btn" class="btn-glass" style="border-color: var(--primary-yellow); color: var(--primary-yellow);"><i data-lucide="zap"></i> BUSCAR AQUÍ</button>
+                    <button id="force-gps-btn" class="u-color-yellow btn-glass u-border-yellow"><i data-lucide="zap"></i> BUSCAR AQUÍ</button>
                 </div>
                 
                 <div class="map-frame">
@@ -256,17 +256,17 @@
                     </div>
                 </div>
 
-                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 1.5rem; border: 1px solid var(--border);">
-                    <p style="font-size: 0.7rem; color: var(--text-muted); text-align: center; font-weight: 700;">GESTIÓN TERRITORIAL EN TIEMPO REAL</p>
+                <div class="u-p-1 u-rounded-15 u-bg-glass-card-border">
+                    <p class="u-color-muted u-bold u-font-tiny u-text-center">GESTIÓN TERRITORIAL EN TIEMPO REAL</p>
                 </div>
             </section>
 
             <!-- Tab 4: Leads History List -->
             <section id="leads-list-tab" class="tab-pane">
-                <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.2rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                        <h2 style="font-size: 1.2rem;">HISTORIAL DE GESTIONES</h2>
-                        <select id="history-status-filter" class="tag-select" style="max-width: 200px;">
+                <div class="u-p-12 u-mb-15 glass-card">
+                    <div class="u-flex-between u-gap-1 u-wrap">
+                        <h2 class="u-font-large">HISTORIAL DE GESTIONES</h2>
+                        <select id="history-status-filter" class="tag-select u-max-w-200">
                             <option value="all">TODOS LOS ESTADOS</option>
                             <option value="visita">SOLO VISITAS</option>
                             <option value="seguimiento">SEGUIMIENTOS</option>
@@ -288,22 +288,22 @@
             <span class="modal-close" id="close-config-modal">&times;</span>
             
             <div class="profile-header">
-                <div class="profile-avatar-large" id="trigger-avatar-upload" style="cursor: pointer; position: relative;" title="Haz clic para cambiar tu foto">
-                    <div id="avatar-preview-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden;">
+                <div class="u-relative u-cursor-pointer profile-avatar-large" id="trigger-avatar-upload" title="Haz clic para cambiar tu foto">
+                    <div id="avatar-preview-container" class="u-w-full u-avatar-wrap">
                         <i data-lucide="user" id="default-avatar-icon"></i>
-                        <img id="user-avatar-img" src="" class="hidden" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img id="user-avatar-img" src="" class="u-w-full hidden u-img-cover" alt="Avatar Usuario">
                     </div>
-                    <div class="avatar-edit-badge"><i data-lucide="camera" style="width: 12px; height: 12px;"></i></div>
+                    <div class="avatar-edit-badge"><i data-lucide="camera" class="u-icon-12"></i></div>
                 </div>
                 <input type="file" id="user-avatar-input" accept="image/*" class="hidden">
-                <h2 style="color: var(--primary-yellow); margin: 1rem 0 0.2rem 0; font-size: 1.5rem;">Ajustes de Perfil</h2>
-                <p style="font-size: 0.8rem; opacity: 0.5;">Gestiona tu identidad y conexiones</p>
+                <h2 class="u-font-large u-color-yellow u-m-1-02">Ajustes de Perfil</h2>
+                <p class="u-font-small u-opacity-05">Gestiona tu identidad y conexiones</p>
             </div>
 
-            <div class="modal-body" style="margin-top: 2rem;">
+            <div class="modal-body u-mt-2">
                 <div class="profile-section">
-                    <div class="section-title"><i data-lucide="contact" style="width: 14px;"></i> INFORMACIÓN PERSONAL</div>
-                    <div class="input-group" style="margin-bottom: 1.2rem;">
+                    <div class="section-title"><i data-lucide="contact" class="u-icon-14"></i> INFORMACIÓN PERSONAL</div>
+                    <div class="u-mb-15 input-group">
                         <label>Email Corporativo</label>
                         <input type="email" id="user-email-display" readonly title="Email del usuario">
                     </div>
@@ -313,14 +313,14 @@
                     </div>
                 </div>
 
-                <div class="profile-section" style="margin-top: 2.5rem;">
-                    <div class="section-title"><i data-lucide="shield-check" style="width: 14px;"></i> SEGURIDAD Y BACKUP</div>
-                    <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Descarga una copia de seguridad local con todos tus datos y fotos. Útil para restaurar si cambias de equipo o navegador.</p>
-                    <div class="grid-inputs-2col" style="margin-top: 1rem;">
-                        <button id="download-backup-btn" class="btn btn-card-action" style="background: rgba(255,255,255,0.05); padding: 0.8rem; border: 1px solid var(--border);">
+                <div class="u-mt-2 profile-section">
+                    <div class="section-title"><i data-lucide="shield-check" class="u-icon-14"></i> SEGURIDAD Y BACKUP</div>
+                    <p class="u-font-tiny u-opacity-05 u-mb-1">Descarga una copia de seguridad local con todos tus datos y fotos. Útil para restaurar si cambias de equipo o navegador.</p>
+                    <div class="grid-inputs-2col u-mt-1">
+                        <button id="download-backup-btn" class="btn btn-card-action u-bg-glass-button">
                             <i data-lucide="download"></i> COPIA SEGURIDAD
                         </button>
-                        <button id="restore-backup-btn" class="btn btn-card-action" style="background: rgba(255,255,255,0.05); padding: 0.8rem; border: 1px solid var(--border);">
+                        <button id="restore-backup-btn" class="btn btn-card-action u-bg-glass-button">
                             <i data-lucide="upload"></i> RESTAURAR COPIA
                         </button>
                         <input type="file" id="import-backup-input" accept=".json" class="hidden">
@@ -328,15 +328,15 @@
                     <button id="force-sync-btn" class="btn-sync-now">
                         <i data-lucide="refresh-cw"></i> SUBIR DATOS A SUPABASE
                     </button>
-                    <button id="download-cloud-btn" class="btn-sync-now" style="background: rgba(34, 197, 94, 0.1); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); margin-top: 0.5rem;">
+                    <button id="download-cloud-btn" class="u-mt-05 btn-sync-now u-bg-green-dim">
                         <i data-lucide="cloud-download"></i> DESCARGAR DATOS DE LA NUBE
                     </button>
                     <p id="last-sync-text" class="sync-status-text">Sin sincronizar</p>
                 </div>
-                <div class="profile-section" style="margin-top: 2.5rem;">
-                    <div class="section-title"><i data-lucide="database" style="width: 14px;"></i> CONEXIÓN AIRTABLE</div>
-                    <p style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1.2rem; line-height: 1.4;">Configura la sincronización con tu base de datos externa para copias de seguridad automáticas.</p>
-                    <div class="grid-inputs-2col" style="margin-top: 1rem;">
+                <div class="u-mt-2 profile-section">
+                    <div class="section-title"><i data-lucide="database" class="u-icon-14"></i> CONEXIÓN AIRTABLE</div>
+                    <p class="u-font-tiny u-opacity-05 u-mb-1">Configura la sincronización con tu base de datos externa para copias de seguridad automáticas.</p>
+                    <div class="grid-inputs-2col u-mt-1">
                         <div class="input-group">
                             <label>Base ID</label>
                             <input type="text" id="air-base" placeholder="appXXXXXXXX">
@@ -348,11 +348,11 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem;">
-                    <button id="save-config-btn" class="btn btn-primary btn-full" style="padding: 1.2rem; font-size: 0.9rem;"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
-                    <div style="text-align: center;">
-                        <p style="font-size: 0.6rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px;">Versión Explorador Pro 2026.04</p>
-                        <p style="font-size: 0.5rem; opacity: 0.2; margin-top: 0.4rem;">MOVISTAR PROSEGUR ALARMAS - AGENTE EXCLUSIVO</p>
+                <div class="u-mt-2 u-flex-column u-gap-15">
+                    <button id="save-config-btn" class="u-p-12 u-font-medium btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                    <div class="u-text-center">
+                        <p class="u-opacity-05 u-text-uppercase u-font-tiny u-tracking-wider">Versión Explorador Pro 2026.04</p>
+                        <p class="u-font-tiny-02 u-opacity-02 u-mt-04">MOVISTAR PROSEGUR ALARMAS - AGENTE EXCLUSIVO</p>
                     </div>
                 </div>
             </div>
@@ -363,11 +363,11 @@
     <div id="detail-modal" class="modal">
         <div class="modal-card full">
             <span class="modal-close" id="close-modal">&times;</span>
-            <div class="modal-header-lead" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-                <input type="text" id="modal-title-input" style="font-size: 1.6rem; font-weight: 800; border: none; background: none; color: var(--primary-yellow); width: 80%;" title="Nombre del Prospecto">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="u-mb-15 modal-header-lead modal-header-flex">
+                <input type="text" id="modal-title-input" class="u-border-none u-bg-none u-color-yellow u-bold modal-title-input-fix" title="Nombre del Prospecto">
+                <div class="u-flex-center u-gap-05">
                     <span id="modal-status-badge" class="badge-status-premium">ESTADO</span>
-                    <span id="modal-interest-badge" class="badge-interest" style="position: static; font-size: 1rem;">--%</span>
+                    <span id="modal-interest-badge" class="u-static u-font-medium badge-interest">--%</span>
                 </div>
             </div>
             
@@ -375,7 +375,7 @@
                 <div class="modal-main-info">
                     <div class="info-section">
                         <h4>UBICACIÓN Y CONTACTO</h4>
-                        <div class="input-group" style="margin-bottom: 0.8rem;">
+                        <div class="u-mb-05 input-group">
                             <label>Dirección Completa</label>
                             <input type="text" id="modal-full-address" placeholder="Ej. Calle Mayor 1">
                         </div>
@@ -405,7 +405,7 @@
                         </div>
                     </div>
                     
-                    <div class="info-section" style="margin-top: 1.5rem;">
+                    <div class="info-section u-mt-15">
                         <h4>IDENTIFICACIÓN FISCAL Y SOCIAL</h4>
                         <div class="grid-inputs-split-70">
                             <div class="input-group">
@@ -419,8 +419,8 @@
                         </div>
                         <div class="input-group">
                             <label>Redes Sociales / Sitio Web</label>
-                            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                <i data-lucide="instagram" style="width: 18px; color: var(--text-muted);"></i>
+                            <div class="u-flex-center u-gap-05">
+                                <i data-lucide="instagram" class="u-icon-18 u-color-muted"></i>
                                 <input type="text" id="modal-rrss" placeholder="@usuario o sitio web">
                             </div>
                         </div>
@@ -430,26 +430,26 @@
                         </div>
                     </div>
 
-                    <div class="info-section" style="margin-top: 1.5rem;">
+                    <div class="info-section u-mt-15">
                         <h4>ANÁLISIS DE COMPETENCIA Y NOTAS</h4>
-                        <div style="margin-bottom: 0.5rem;">
-                            <label style="font-size: 0.65rem; color: var(--primary-yellow); font-weight: 800; text-transform: uppercase;">Compañía de Alarma Actual</label>
-                            <select id="modal-alarm-company" style="margin-top: 0.2rem; width: 100%; padding: 0.8rem 1rem; border-radius: 1rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: white; font-weight: 600;" title="Compañía de Alarma Actual">
-                                <option value="NINGUNA" style="background: var(--bg-dark);">Ninguna / Desconocida</option>
-                                <option value="PROSEGUR" style="background: var(--bg-dark);">Movistar Prosegur Alarmas</option>
-                                <option value="SECURITAS" style="background: var(--bg-dark);">Securitas Direct</option>
-                                <option value="ADT" style="background: var(--bg-dark);">ADT</option>
-                                <option value="SEGURMA" style="background: var(--bg-dark);">Segurma</option>
-                                <option value="SICOR" style="background: var(--bg-dark);">Sicor</option>
-                                <option value="3D" style="background: var(--bg-dark);">3D</option>
-                                <option value="OTROS" style="background: var(--bg-dark);">Otros Locales / Regionales</option>
+                        <div class="u-mb-05">
+                            <label class="u-font-tiny u-text-uppercase u-color-yellow u-bold">Compañía de Alarma Actual</label>
+                            <select id="modal-alarm-company" class="u-bold u-mt-05 u-rounded-1 u-color-white u-w-full u-p-08-1 u-bg-glass-button-02" title="Compañía de Alarma Actual">
+                                <option value="NINGUNA" class="u-bg-dark">Ninguna / Desconocida</option>
+                                <option value="PROSEGUR" class="u-bg-dark">Movistar Prosegur Alarmas</option>
+                                <option value="SECURITAS" class="u-bg-dark">Securitas Direct</option>
+                                <option value="ADT" class="u-bg-dark">ADT</option>
+                                <option value="SEGURMA" class="u-bg-dark">Segurma</option>
+                                <option value="SICOR" class="u-bg-dark">Sicor</option>
+                                <option value="3D" class="u-bg-dark">3D</option>
+                                <option value="OTROS" class="u-bg-dark">Otros Locales / Regionales</option>
                             </select>
                         </div>
-                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." style="width: 100%; padding: 1rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); color: white; font-weight: 600;"></textarea>
+                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05"></textarea>
                     </div>
                 </div>
                 
-                <div class="modal-sidebar" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 2rem;">
+                <div class="u-rounded-2 modal-sidebar u-bg-glass-card">
                     <div class="status-picker">
                         <h4>DEFINIR ESTADO DE GESTIÓN</h4>
                         <div class="grid-2-buttons">
@@ -459,12 +459,12 @@
                             <button class="status-btn-pick firmado" data-status="firmado">FIRMADO</button>
                         </div>
                     </div>
-                    <div class="action-buttons" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
-                        <a id="modal-maps-link" href="#" target="_blank" class="btn" style="background: #4285F4; color: white;"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
+                    <div class="u-mt-2 action-buttons u-flex-column u-gap-08">
+                        <a id="modal-maps-link" href="#" target="_blank" class="u-color-white btn u-bg-google"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
                         <button id="save-lead-btn" class="btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
-                        <button id="delete-lead-btn" class="btn btn-full" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); margin-top: 1rem;"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
+                        <button id="delete-lead-btn" class="u-mt-1 btn btn-full u-bg-red-dim"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
                     </div>
-                    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.65rem; opacity: 0.4; font-weight: 700; display: flex; flex-direction: column; gap: 0.4rem;">
+                    <div class="u-font-tiny u-bold u-opacity-05 u-text-center u-mt-15 u-flex-column u-gap-04">
                         <div>ALTA: <span id="modal-created">--</span></div>
                         <div>ÚLTIMO CAMBIO: <span id="modal-updated">--</span></div>
                     </div>
@@ -475,18 +475,18 @@
 
     <!-- Delete Confirm Modal -->
     <div id="delete-history-modal" class="modal">
-        <div class="modal-card mini" style="text-align: center;">
-            <div style="padding: 1rem; color: var(--danger); font-size: 2.5rem;"><i data-lucide="alert-triangle"></i></div>
-            <h2 style="margin-bottom: 0.5rem;">Limpiar Registros</h2>
-            <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 1.5rem;">Selecciona el periodo a eliminar de tu base de datos local.</p>
-            <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 1.2rem; margin-bottom: 1.5rem;">
-                <label style="cursor: pointer; font-weight: 800;"><input type="radio" name="delete-period" value="today" checked> GESTIONES DE HOY</label>
-                <label style="cursor: pointer; font-weight: 800;"><input type="radio" name="delete-period" value="week"> ESTA SEMANA</label>
-                <label style="cursor: pointer; font-weight: 800; color: var(--danger);"><input type="radio" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
+        <div class="modal-card mini u-text-center">
+            <div class="u-font-giant u-p-1 u-color-danger"><i data-lucide="alert-triangle"></i></div>
+            <h2 class="u-mb-05">Limpiar Registros</h2>
+            <p class="u-font-small u-opacity-06 u-mb-15">Selecciona el periodo a eliminar de tu base de datos local.</p>
+            <div class="u-text-left u-p-12 u-mb-15 u-flex-column u-gap-1 u-bg-glass-card-02">
+                <label class="u-cursor-pointer u-bold"><input type="radio" name="delete-period" value="today" checked> GESTIONES DE HOY</label>
+                <label class="u-cursor-pointer u-bold"><input type="radio" name="delete-period" value="week"> ESTA SEMANA</label>
+                <label class="u-cursor-pointer u-color-danger u-bold"><input type="radio" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
             </div>
-            <div style="display: flex; gap: 0.8rem;">
-                <button id="cancel-delete-btn" class="btn btn-full" style="background: rgba(255,255,255,0.05);">CANCELAR</button>
-                <button id="confirm-delete-btn" class="btn btn-full" style="background: var(--danger); color: white;">BORRAR</button>
+            <div class="u-flex u-gap-08">
+                <button id="cancel-delete-btn" class="btn btn-full u-bg-glass-button">CANCELAR</button>
+                <button id="confirm-delete-btn" class="u-color-danger u-color-white btn btn-full">BORRAR</button>
             </div>
         </div>
     </div>
@@ -495,24 +495,24 @@
     <div id="add-lead-modal" class="modal">
         <div class="modal-card mini">
             <span class="modal-close" id="close-add-modal">&times;</span>
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <div style="padding: 1rem; color: var(--primary-yellow); font-size: 2.5rem;"><i data-lucide="plus-circle"></i></div>
-                <h2 style="color: var(--primary-yellow);">Nuevo Prospecto</h2>
-                <p style="font-size: 0.8rem; opacity: 0.5;">Añadir local manualmente a tu ruta</p>
+            <div class="u-mb-2 u-text-center">
+                <div class="u-font-giant u-p-1 u-color-yellow"><i data-lucide="plus-circle"></i></div>
+                <h2 class="u-color-yellow">Nuevo Prospecto</h2>
+                <p class="u-font-small u-opacity-05">Añadir local manualmente a tu ruta</p>
             </div>
             
             <div class="modal-body">
-                <div class="input-group" style="margin-bottom: 1.5rem;">
+                <div class="input-group u-mb-15">
                     <label>Nombre del Negocio</label>
                     <input type="text" id="add-lead-name" placeholder="Ej: Cafetería Central">
                 </div>
-                <div class="input-group" style="margin-bottom: 2rem;">
+                <div class="input-group u-mb-2">
                     <label>Sector / Actividad</label>
                     <input type="text" id="add-lead-sector" placeholder="Ej: Restaurante, Clínica...">
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    <button id="confirm-add-lead-btn" class="btn btn-primary btn-full" style="padding: 1.2rem; font-size: 0.9rem;">
+                <div class="u-flex-column u-gap-1">
+                    <button id="confirm-add-lead-btn" class="u-p-12 u-font-medium btn btn-primary btn-full">
                         <i data-lucide="save"></i> GUARDAR EN HISTORIAL
                     </button>
                 </div>
@@ -522,33 +522,33 @@
 
     <!-- Forgot Password Modal -->
     <div id="forgot-password-modal" class="modal">
-        <div class="modal-card mini" style="text-align: center;">
+        <div class="modal-card mini u-text-center">
             <div id="forgot-init-state">
-                <div style="padding: 1rem; color: var(--primary-yellow); font-size: 2.5rem;"><i data-lucide="shield-alert"></i></div>
-                <h2 style="margin-bottom: 1rem; color: var(--primary-yellow);">Recuperación de Clave</h2>
-                <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.5rem; line-height: 1.6;">
+                <div class="u-font-giant u-p-1 u-color-yellow"><i data-lucide="shield-alert"></i></div>
+                <h2 class="u-mb-1 u-color-yellow">Recuperación de Clave</h2>
+                <p class="u-opacity-08 u-lh-16 u-font-medium u-mb-15">
                     Introduce tu email corporativo para recibir un enlace de restauración.
                 </p>
-                <div class="login-minimal-group" style="margin-bottom: 1.5rem;">
-                    <input type="email" id="forgot-email" placeholder="tu-email@prosegur.com" style="font-size: 1rem; padding: 1rem;">
+                <div class="login-minimal-group u-mb-15">
+                    <input type="email" id="forgot-email" placeholder="tu-email@prosegur.com" class="u-font-medium u-p-1">
                 </div>
                 <button id="send-reset-btn" class="btn btn-primary btn-full">ENVIAR ENLACE</button>
-                <button id="close-forgot-modal" class="link-btn-dim" style="margin-top: 1rem; display: block; width: 100%;">VOLVER</button>
+                <button id="close-forgot-modal" class="u-block u-mt-1 u-w-full link-btn-dim">VOLVER</button>
             </div>
             
             <div id="forgot-sending-state" class="hidden">
-                <div style="padding: 2rem;">
+                <div class="u-p-2">
                     <div class="loader-ring"></div>
-                    <p style="margin-top: 1.5rem; font-weight: 800; color: var(--primary-yellow);">ENVIANDO ENLACE...</p>
-                    <p style="font-size: 0.8rem; opacity: 0.5;">Verificando servidor de Prosegur</p>
+                    <p class="u-color-yellow u-mt-15 u-bold">ENVIANDO ENLACE...</p>
+                    <p class="u-font-small u-opacity-05">Verificando servidor de Prosegur</p>
                 </div>
             </div>
 
             <div id="forgot-success-state" class="hidden">
-                <div style="padding: 1rem; color: var(--success); font-size: 2.5rem;"><i data-lucide="check-circle"></i></div>
-                <h2 style="margin-bottom: 1rem; color: var(--success);">¡ENVIADO!</h2>
-                <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 2rem; line-height: 1.6;">
-                    Hemos enviado un código de acceso a <br><b id="sent-email-display" style="color: white;">---</b>.<br><br>
+                <div class="u-font-giant u-p-1 u-color-success"><i data-lucide="check-circle"></i></div>
+                <h2 class="u-mb-1 u-color-success">¡ENVIADO!</h2>
+                <p class="u-opacity-08 u-mb-2 u-lh-16 u-font-medium">
+                    Hemos enviado un código de acceso a <br><b id="sent-email-display" class="u-color-white">---</b>.<br><br>
                     Revisa tu bandeja de entrada y la carpeta de spam.
                 </p>
                 <button id="forgot-finish-btn" class="btn btn-primary btn-full">CERRAR</button>
