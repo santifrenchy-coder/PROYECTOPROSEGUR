@@ -417,6 +417,7 @@
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span id="modal-status-badge" class="badge-status-premium">ESTADO</span>
                     <span id="modal-interest-badge" class="badge-interest" style="position: static; font-size: 1rem;">--%</span>
+                    <div id="ai-prob-badge-container"></div>
                 </div>
             </div>
             
@@ -495,6 +496,35 @@
                             </select>
                         </div>
                         <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." style="width: 100%; padding: 1rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); color: white; font-weight: 600;"></textarea>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN: ASISTENTE IA EN FICHA -->
+                    <div class="info-section ai-analysis-section" style="margin-top: 1.5rem; border: 1px solid rgba(254, 208, 0, 0.2); background: rgba(254, 208, 0, 0.02);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                            <h4 style="margin: 0; color: var(--primary-yellow); display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="sparkles" style="width: 18px;"></i> ANÁLISIS INTELIGENTE
+                            </h4>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.65rem;" onclick="window.calculateAIProbability()">PROBABILIDAD</button>
+                                <button class="btn btn-glass" style="padding: 0.4rem 0.8rem; font-size: 0.65rem; border-color: rgba(255,255,255,0.1);" onclick="window.analyzeAILead()">ANÁLISIS</button>
+                            </div>
+                        </div>
+                        
+                        <div id="ai-analysis-content">
+                            <div id="ai-analysis-empty" style="text-align: center; padding: 2rem; opacity: 0.5;">
+                                <i data-lucide="brain-circuit" style="width: 40px; height: 40px; margin-bottom: 1rem;"></i>
+                                <p style="font-size: 0.8rem; font-weight: 600;">Pulsa los botones superiores para activar el análisis del Asistente Comercial IA.</p>
+                            </div>
+                            
+                            <div id="ai-analysis-loading" class="hidden" style="text-align: center; padding: 3rem;">
+                                <div class="loader-ring"></div>
+                                <p style="margin-top: 1.5rem; font-weight: 800; color: var(--primary-yellow); letter-spacing: 1px;">CONSULTANDO A LA IA...</p>
+                            </div>
+                            
+                            <div id="ai-analysis-result" class="hidden">
+                                <!-- Se inyecta dinámicamente -->
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

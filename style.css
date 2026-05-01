@@ -846,3 +846,25 @@ input[readonly] {
     .ai-analysis-grid { grid-template-columns: 1fr; }
     .ai-msg { max-width: 95%; }
 }
+
+/* --- Mejoras Finales Asistente IA --- */
+.ai-analysis-section {
+    border-radius: 1.8rem !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease;
+}
+
+.ai-empty-state i {
+    color: var(--primary-yellow);
+    filter: drop-shadow(0 0 10px rgba(254, 208, 0, 0.3));
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+

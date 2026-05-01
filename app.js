@@ -784,10 +784,15 @@ function renderLeads() {
         if (l.interest < filters.interest) return false;
         if (filters.status !== 'all' && l.status !== filters.status) return false;
         
-        if (filters.date === 'recent') {
-            const parts = l.date.split('/');
-            const date = new Date(parts[2], parts[1]-1, parts[0]);
-            if ((Date.now() - date.getTime()) > 7*24*60*60*1000) return false;
+        if (filters.date === 'recent' && l.date) {
+            let date;
+            if (l.date.includes('-')) {
+                date = new Date(l.date);
+            } else if (l.date.includes('/')) {
+                const parts = l.date.split('/');
+                date = new Date(parts[2], parts[1]-1, parts[0]);
+            }
+            if (date && (Date.now() - date.getTime()) > 7*24*60*60*1000) return false;
         }
         return true;
     });
@@ -1406,7 +1411,10 @@ async function callAssistantAPI(payload) {
     try {
         const response = await fetch(AI_CONFIG.endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY 
+            },
             body: JSON.stringify(payload)
         });
         return await response.json();
