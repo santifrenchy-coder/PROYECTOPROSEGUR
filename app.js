@@ -20,6 +20,13 @@ let state = {
     searchCircle: null
 };
 
+// --- CONFIGURACIÓN GLOBAL ---
+const AI_MOCK_MODE = true;
+const AI_CONFIG = {
+    model: "gpt-4o", // Preparado para el futuro
+    endpoint: "https://vjzyxtwzxpjxxtxvjxxt.supabase.co/functions/v1/prosegur-ai-agent"
+};
+
 // --- Configuración Supabase ---
 const SUPABASE_URL = 'https://iwxxixyjaxenojckohml.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHhpeHlqYXhlbm9qY2tvaG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNjEyMjMsImV4cCI6MjA5MjkzNzIyM30.NO3dG4HALVF81bXZoGRsiDxbwuYzi53pjNyGt4O85lA';
@@ -169,7 +176,19 @@ function initDom() {
         cloudSyncStatus: document.getElementById('cloud-sync-status'),
         forceSyncBtn: document.getElementById('force-sync-btn'),
         downloadCloudBtn: document.getElementById('download-cloud-btn'),
-        lastSyncText: document.getElementById('last-sync-text')
+        lastSyncText: document.getElementById('last-sync-text'),
+        
+        // --- AI Assistant Elements ---
+        assistantTab: document.getElementById('assistant-tab'),
+        aiUserInput: document.getElementById('ai-user-input'),
+        aiChatHistory: document.getElementById('ai-chat-history'),
+        aiCurrentLeadName: document.getElementById('ai-current-lead-name'),
+        aiContextPanel: document.getElementById('ai-context-panel'),
+        aiProbBadgeContainer: document.getElementById('ai-prob-badge-container'),
+        aiAnalysisContent: document.getElementById('ai-analysis-content'),
+        aiAnalysisEmpty: document.getElementById('ai-analysis-empty'),
+        aiAnalysisLoading: document.getElementById('ai-analysis-loading'),
+        aiAnalysisResult: document.getElementById('ai-analysis-result'),
     };
 }
 
@@ -825,11 +844,11 @@ function createLeadCard(lead) {
         
         <div class="interest-progress-wrapper">
             <div class="interest-label-flex">
-                <span style="color: ${interestColor}">POTENCIAL COMERCIAL</span>
-                <span>${lead.interest}%</span>
+                <span style="color: ${interestColor}">${lead.aiAnalysis ? 'POTENCIAL IA' : 'POTENCIAL COMERCIAL'}</span>
+                <span>${lead.aiAnalysis ? lead.aiAnalysis.probability : lead.interest}%</span>
             </div>
             <div class="progress-track">
-                <div class="progress-fill" style="width: ${lead.interest}%; background: ${interestColor}; box-shadow: 0 0 10px ${interestColor}44;"></div>
+                <div class="progress-fill" style="width: ${lead.aiAnalysis ? lead.aiAnalysis.probability : lead.interest}%; background: ${interestColor}; box-shadow: 0 0 10px ${interestColor}44;"></div>
             </div>
         </div>
         
@@ -858,16 +877,16 @@ function renderMapPins() {
     markersLayer.clearLayers();
     
     state.leads.forEach(l => {
+        let prob = l.aiAnalysis ? l.aiAnalysis.probability : l.interest;
         let color = '#FED000'; // Gold standard
-        if (l.interest >= 90) color = '#ef4444'; // Muy alto potencial (Rojo Prosegur)
-        else if (l.interest >= 75) color = '#f97316'; // Alto potencial (Naranja)
-        
+        if (prob >= 90) color = '#ef4444'; // Muy alto potencial (Rojo Prosegur)
+        else if (prob >= 75) color = '#f97316'; // Alto potencial (Naranja)
         if (l.status === 'seguimiento') color = '#fce7d2';
         if (l.status === 'firmado') color = '#22c55e';
         if (l.status === 'descartado') color = '#64748b'; // Gris para descartados
         
         const pin = L.circleMarker([l.lat, l.lng], {
-            radius: l.interest >= 80 ? 10 : 7, // Más grandes los de alto interés
+            radius: prob >= 80 ? 10 : 7, // Más grandes los de alto interés
             fillColor: color,
             color: '#fff',
             weight: 2,
@@ -878,7 +897,7 @@ function renderMapPins() {
         pin.bindPopup(`
             <div style="text-align: center; color: var(--bg-dark);">
                 <b style="font-size: 1rem;">${l.name}</b><br>
-                <span style="font-size: 0.8rem;">Potencial: ${l.interest}%</span><br>
+                <span style="font-size: 0.8rem;">Potencial: ${prob}% ${l.aiAnalysis ? '(IA)' : ''}</span><br>
                 <button onclick="window.openLeadByID('${l.id}')" style="margin-top: 10px; background: #003399; color: white; border: none; padding: 8px 12px; border-radius: 2rem; font-weight: 800; cursor: pointer; width: 100%;">GESTIONAR</button>
             </div>
         `);
@@ -920,6 +939,39 @@ function openLead(lead) {
     dom.modalMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name + ' ' + lead.address)}`;
     
     updateStatusUI();
+    
+    // --- Lógica de IA para el lead abierto ---
+    if (dom.aiContextPanel) {
+        dom.aiContextPanel.classList.remove('hidden');
+        dom.aiCurrentLeadName.innerText = lead.name;
+    }
+    
+    // Resetear estados de análisis en el modal
+    dom.aiAnalysisEmpty.classList.remove('hidden');
+    dom.aiAnalysisLoading.classList.add('hidden');
+    dom.aiAnalysisResult.classList.add('hidden');
+    dom.aiProbBadgeContainer.innerHTML = "";
+
+    // Si ya tiene análisis IA, renderizarlo
+    if (lead.aiAnalysis) {
+        dom.aiAnalysisEmpty.classList.add('hidden');
+        renderAIAnalysisResult(lead.aiAnalysis, "Probabilidad Inteligente");
+        
+        // Badge de probabilidad IA
+        dom.aiProbBadgeContainer.innerHTML = `
+            <span class="badge-interest-premium" style="color: var(--primary-yellow); border-color: var(--primary-yellow);">
+                ${lead.aiAnalysis.probability}% <small>IA</small>
+            </span>
+        `;
+    } else if (lead.interest) {
+        // Retrocompatibilidad: Mostrar interés antiguo si no hay IA
+        dom.aiProbBadgeContainer.innerHTML = `
+            <span class="badge-interest-premium" style="color: #94a3b8; border-color: rgba(255,255,255,0.1);">
+                ${lead.interest}% <small>EST.</small>
+            </span>
+        `;
+    }
+
     dom.modal.classList.add('active');
 }
 
@@ -1000,7 +1052,10 @@ function saveConfig(silent = false) {
 
 function updateStats() {
     dom.statTotal.innerText = state.leads.length;
-    dom.statHigh.innerText = state.leads.filter(l => l.interest >= 80).length;
+    dom.statHigh.innerText = state.leads.filter(l => {
+        let prob = l.aiAnalysis ? l.aiAnalysis.probability : l.interest;
+        return prob >= 80;
+    }).length;
     dom.statFirmado.innerText = state.leads.filter(l => l.status === 'firmado').length;
     dom.statSeguimiento.innerText = state.leads.filter(l => l.status === 'seguimiento').length;
     dom.statVisita.innerText = state.leads.filter(l => l.status === 'visita').length;
@@ -1220,6 +1275,262 @@ async function exportToAirtable() {
 
 // Manejo de Filtros
 function handleFiltering() { renderLeads(); }
+
+// --- MÓDULO ASISTENTE IA (MODO MOCK) ---
+
+window.fillAIInput = (type) => {
+    const templates = {
+        objecion: "Ayúdame a responder esta objeción del cliente: [escribe aquí la objeción]. Dame una respuesta natural, breve y comercial.",
+        sector: "Dame un argumento comercial breve y potente para vender una alarma a este tipo de negocio: [tipo de negocio]. Incluye una frase de entrada y una pregunta de avance.",
+        competencia: "El cliente me compara con otra empresa de alarmas o dice que ya trabaja con la competencia. Dame una respuesta ética, profesional y orientada al valor, sin atacar a nadie.",
+        normativa: "Explícame de forma sencilla y prudente este tema de seguridad privada o alarmas: [tema]. No des asesoramiento jurídico definitivo.",
+        whatsapp: "Redáctame un WhatsApp breve y profesional para este cliente/lead: [contexto]. Objetivo del mensaje: [primer contacto / seguimiento / retomar conversación / cierre].",
+        cierre: "Dame una frase de cierre natural para avanzar con un cliente que está interesado pero duda."
+    };
+    if (dom.aiUserInput && templates[type]) {
+        dom.aiUserInput.value = templates[type];
+        dom.aiUserInput.focus();
+    }
+};
+
+window.sendAIMessage = async () => {
+    const text = dom.aiUserInput.value.trim();
+    if (!text) return;
+
+    // Renderizar mensaje del usuario
+    renderAIMessage('user', text);
+    dom.aiUserInput.value = "";
+
+    // Preparar payload
+    const payload = {
+        mode: "general_chat",
+        text: text,
+        lead: currentLead ? {
+            name: currentLead.name,
+            sector: currentLead.sector,
+            address: currentLead.address,
+            alarm: currentLead.alarm,
+            services: currentLead.services
+        } : null
+    };
+
+    // Respuesta del asistente (con loader simulado)
+    const response = await callAssistantAPI(payload);
+    if (response.ok) {
+        renderAIMessage('assistant', response.answer);
+    } else {
+        renderAIMessage('assistant', "Lo siento, ha ocurrido un error al procesar tu solicitud.");
+    }
+};
+
+function renderAIMessage(role, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `ai-msg ${role}`;
+    msgDiv.innerText = text;
+    dom.aiChatHistory.appendChild(msgDiv);
+    dom.aiChatHistory.scrollTop = dom.aiChatHistory.scrollHeight;
+}
+
+async function callAssistantAPI(payload) {
+    if (AI_MOCK_MODE) {
+        // Simular latencia de red
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        if (payload.mode === "general_chat") {
+            return {
+                ok: true,
+                mode: "general_chat",
+                answer: "Respuesta simulada del Asistente IA. He recibido tu mensaje: \"" + payload.text + "\". En la fase real, aquí aparecerá la ayuda comercial basada en inteligencia artificial."
+            };
+        }
+
+        if (payload.mode === "lead_analysis") {
+            return {
+                ok: true,
+                mode: "lead_analysis",
+                analysis: {
+                    summary: "Lead con posible oportunidad comercial según tipo de negocio y datos disponibles.",
+                    opportunityType: "Media-Alta",
+                    confidence: "Media",
+                    positivePoints: [
+                        "Negocio físico con exposición al público.",
+                        "Puede tener bienes o stock protegible.",
+                        "Existe oportunidad de revisar su sistema actual."
+                    ],
+                    risks: [
+                        "Puede tener proveedor actual.",
+                        "Puede ser sensible al precio."
+                    ],
+                    likelyObjection: "Ya tengo alarma o ahora no quiero más gastos.",
+                    recommendedOpening: "Estoy visitando negocios de la zona para revisar si tienen bien cubierta la protección fuera de horario.",
+                    usefulQuestions: [
+                        "¿Actualmente tiene alarma conectada o solo cámaras?",
+                        "¿Quién recibe el aviso si ocurre algo fuera de horario?",
+                        "¿Está satisfecho con el sistema actual?"
+                    ],
+                    nextAction: "Visita presencial breve con pregunta inicial sobre su sistema actual.",
+                    note: "Este análisis es orientativo y se basa en los datos disponibles."
+                }
+            };
+        }
+
+        if (payload.mode === "lead_probability") {
+            return {
+                ok: true,
+                mode: "lead_probability",
+                analysis: {
+                    probability: 68,
+                    level: "Medio-Alto",
+                    confidence: "Media",
+                    summary: "Lead con potencial razonable por tipo de negocio y exposición comercial.",
+                    positiveReasons: [
+                        "Negocio físico con exposición al público.",
+                        "Puede tener stock, caja o elementos protegibles.",
+                        "La protección fuera de horario puede ser un argumento relevante."
+                    ],
+                    risks: [
+                        "Puede tener proveedor actual.",
+                        "No hay datos suficientes sobre interés real.",
+                        "Puede ser sensible al precio."
+                    ],
+                    likelyObjection: "Ya tengo alarma o ahora no quiero más gastos.",
+                    recommendedArgument: "Enfocar la conversación en tranquilidad, protección fuera de horario y respuesta rápida.",
+                    nextAction: "Visita presencial breve preguntando por su sistema actual.",
+                    note: "Esta probabilidad es una estimación comercial orientativa basada en los datos disponibles, no una garantía de conversión."
+                }
+            };
+        }
+    }
+
+    // Futura llamada real a Supabase Edge Function
+    try {
+        const response = await fetch(AI_CONFIG.endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        return await response.json();
+    } catch (e) {
+        return { ok: false, error: e.message };
+    }
+}
+
+window.analyzeAILead = async () => {
+    if (!currentLead) return alert("Primero selecciona un lead para poder analizarlo.");
+    
+    // UI Loading
+    dom.aiAnalysisEmpty.classList.add('hidden');
+    dom.aiAnalysisLoading.classList.remove('hidden');
+    dom.aiAnalysisResult.classList.add('hidden');
+
+    const response = await callAssistantAPI({ mode: "lead_analysis", lead: currentLead });
+    
+    dom.aiAnalysisLoading.classList.add('hidden');
+    if (response.ok) {
+        renderAIAnalysisResult(response.analysis, "Análisis de Lead");
+    } else {
+        alert("Error al analizar el lead.");
+        dom.aiAnalysisEmpty.classList.remove('hidden');
+    }
+};
+
+window.calculateAIProbability = async () => {
+    if (!currentLead) return alert("Primero selecciona un lead para calcular su probabilidad.");
+    
+    // UI Loading
+    dom.aiAnalysisEmpty.classList.add('hidden');
+    dom.aiAnalysisLoading.classList.remove('hidden');
+    dom.aiAnalysisResult.classList.add('hidden');
+
+    const response = await callAssistantAPI({ mode: "lead_probability", lead: currentLead });
+    
+    dom.aiAnalysisLoading.classList.add('hidden');
+    if (response.ok) {
+        // Guardar resultado de forma compacta en el lead
+        currentLead.aiAnalysis = {
+            probability: response.analysis.probability,
+            level: response.analysis.level,
+            confidence: response.analysis.confidence,
+            summary: response.analysis.summary,
+            updatedAt: new Date().toISOString()
+        };
+        
+        // Actualizar en el array global
+        const idx = state.leads.findIndex(l => l.id === currentLead.id);
+        if (idx !== -1) state.leads[idx] = { ...currentLead };
+        
+        saveToDisk();
+        renderAIAnalysisResult(response.analysis, "Probabilidad Inteligente");
+    } else {
+        alert("Error al calcular la probabilidad.");
+        dom.aiAnalysisEmpty.classList.remove('hidden');
+    }
+};
+
+function renderAIAnalysisResult(analysis, title) {
+    dom.aiAnalysisResult.classList.remove('hidden');
+    
+    const isProb = analysis.probability !== undefined;
+    
+    let html = `
+        <div class="ai-prob-card">
+            <div class="ai-prob-header">
+                ${isProb ? `
+                    <div class="ai-prob-circle">
+                        <span class="ai-prob-val">${analysis.probability}</span>
+                        <span class="ai-prob-unit">%</span>
+                    </div>
+                ` : `
+                    <div class="ai-prob-circle" style="border-color: #3b82f6;">
+                        <i data-lucide="brain-circuit" style="width: 24px; color: #3b82f6;"></i>
+                    </div>
+                `}
+                <div class="ai-prob-meta">
+                    <span class="ai-prob-level">${isProb ? analysis.level : analysis.opportunityType}</span>
+                    <span class="ai-prob-confidence">Confianza ${analysis.confidence}</span>
+                </div>
+            </div>
+
+            <div class="ai-summary-text">
+                ${analysis.summary}
+            </div>
+
+            <div class="ai-analysis-grid">
+                <div class="ai-analysis-box">
+                    <h5><i data-lucide="check-circle" style="width: 12px;"></i> PUNTOS POSITIVOS</h5>
+                    <ul class="ai-analysis-list">
+                        ${(analysis.positivePoints || analysis.positiveReasons).map(p => `<li>${p}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="ai-analysis-box">
+                    <h5><i data-lucide="alert-triangle" style="width: 12px; color: var(--danger);"></i> RIESGOS</h5>
+                    <ul class="ai-analysis-list risks">
+                        ${analysis.risks.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <h5 style="font-size: 0.65rem; font-weight: 900; color: var(--primary-yellow); margin-bottom: 0.4rem; text-transform: uppercase;">OBJECIÓN PROBABLE</h5>
+                <p style="font-size: 0.75rem; font-style: italic; opacity: 0.8; background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 0.8rem; border-left: 3px solid var(--danger);">
+                    "${analysis.likelyObjection}"
+                </p>
+            </div>
+
+            <div class="ai-action-box">
+                <p style="font-size: 0.65rem; font-weight: 900; opacity: 0.6; margin-bottom: 4px; text-transform: uppercase; color: #22c55e;">SIGUIENTE ACCIÓN RECOMENDADA</p>
+                <p>${analysis.nextAction || analysis.recommendedArgument}</p>
+            </div>
+            
+            <p style="font-size: 0.6rem; color: var(--text-muted); text-align: center; margin-top: 1.5rem;">
+                * ${analysis.note}
+            </p>
+        </div>
+    `;
+    
+    dom.aiAnalysisResult.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
+}
 
 // --- Gestión de Prospectos Manuales ---
 
