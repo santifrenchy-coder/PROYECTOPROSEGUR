@@ -21,7 +21,7 @@ let state = {
 };
 
 // --- CONFIGURACIÓN GLOBAL ---
-const AI_MOCK_MODE = true;
+const AI_MOCK_MODE = false;
 const AI_CONFIG = {
     model: "gpt-4o", // Preparado para el futuro
     endpoint: "https://vjzyxtwzxpjxxtxvjxxt.supabase.co/functions/v1/prosegur-ai-agent"
