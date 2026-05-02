@@ -310,7 +310,6 @@ function setupEventListeners() {
         dom.tabBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tabId = btn.getAttribute('data-tab');
-                console.log("Cambiando a pestaña:", tabId);
                 
                 // Desactivar todo
                 dom.tabBtns.forEach(b => b.classList.remove('active'));

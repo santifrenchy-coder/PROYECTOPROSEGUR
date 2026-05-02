@@ -19,6 +19,8 @@ Utilizando un sistema **"Offline-First"**, la aplicación garantiza que el agent
 - **☁️ Sincronización Cloud (Supabase)**: Backup automático y recuperación de datos multicliente para evitar la pérdida de información en campo.
 - **📊 Gestión de Leads 360**: Sistema de fichas detalladas con métricas de interés, estados de gestión (Visita, Seguimiento, Firmado) y análisis de competencia.
 - **📱 Interfaz Premium Dark**: Diseño ultra-moderno basado en el Design System de Prosegur, optimizado para usabilidad móvil bajo luz solar.
+- **🤖 Asistente IA Comercial**: Copiloto estratégico conectado a OpenAI para resolución de objeciones, tácticas de venta y análisis de competencia en tiempo real.
+- **📊 Análisis Inteligente de Leads**: Sistema de evaluación automática de prospectos con cálculo de probabilidad de éxito y generación de informes tácticos.
 - **📥 Herramientas de Exportación**: Exportación instantánea a Excel y sincronización directa con bases de datos externas (Airtable).
 
 ---
