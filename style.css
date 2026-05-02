@@ -952,3 +952,36 @@ input[readonly] {
 .u-opacity-07 { opacity: 0.7 !important; }
 .u-opacity-08 { opacity: 0.8 !important; }
 .u-lh-16 { line-height: 1.6 !important; }
+/* --- AI Report Premium --- */
+.ai-report-premium {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+.report-badge {
+    padding: 0.3rem 0.7rem;
+    border-radius: 2rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.report-badge.alto { background: #10b981; color: white; }
+.report-badge.medio { background: #f59e0b; color: white; }
+.report-badge.bajo { background: #ef4444; color: white; }
+
+.report-prob { font-weight: 800; color: var(--primary-yellow); font-size: 0.9rem; }
+.report-body p { font-size: 0.8rem; margin-bottom: 0.5rem; line-height: 1.4; }
+.report-body i { width: 14px; height: 14px; margin-right: 0.3rem; vertical-align: middle; color: var(--primary-yellow); }
+.report-footer { margin-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.4rem; text-align: right; }
+.report-footer small { color: var(--text-muted); font-size: 0.6rem; font-style: italic; }

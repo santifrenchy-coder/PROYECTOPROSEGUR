@@ -1581,16 +1581,28 @@ async function analyzeLeadWithAI(leadId) {
         lead.interest = result.probability;
         saveToDisk();
         renderLeads();
+        renderMapPins(); // Actualizar pines en el mapa
         updateStats();
         
-        let report = `### Análisis Final: ${result.level}\n\n`;
-        report += `**Probabilidad:** ${result.probability}%\n`;
-        report += `**Razones:** ${result.reasons.join(", ")}\n`;
-        report += `**Consejo:** ${result.advice}`;
-        
-        addChatMessage(report.replace(/\n/g, '<br>'), 'ai');
+        let report = `
+            <div class="ai-report-premium">
+                <div class="report-header">
+                    <span class="report-badge ${result.level.toLowerCase()}">Nivel: ${result.level}</span>
+                    <span class="report-prob">${result.probability}% Probabilidad</span>
+                </div>
+                <div class="report-body">
+                    <p><strong><i data-lucide="check-circle"></i> Puntos Fuertes:</strong> ${result.reasons.join(", ")}</p>
+                    <p><strong><i data-lucide="info"></i> Táctica Recomendada:</strong> ${result.advice}</p>
+                </div>
+                <div class="report-footer">
+                    <small>Ficha actualizada automáticamente</small>
+                </div>
+            </div>
+        `;
+        addChatMessage(report, 'ai');
+        if (window.lucide) lucide.createIcons();
     } else {
-        addChatMessage("No he podido realizar el análisis técnico de este lead.", 'ai');
+        addChatMessage("No he podido realizar el análisis técnico de este lead. Revisa los datos (sector, notas...) e inténtalo de nuevo.", 'ai');
     }
 }
 
