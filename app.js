@@ -26,7 +26,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let sb = null;
 
 // --- Configuración IA ---
-const AI_MOCK_MODE = true;
+const AI_MOCK_MODE = false;
 const AI_ENDPOINT = `${SUPABASE_URL}/functions/v1/prosegur-ai-agent`;
 
 let map = null;
@@ -306,21 +306,29 @@ function setupEventListeners() {
     }
 
     // Tabs
-    dom.tabBtns.forEach(btn => {
-        btn.onclick = () => {
-            dom.tabBtns.forEach(b => b.classList.remove('active'));
-            dom.tabPanes.forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            const target = document.getElementById(btn.dataset.tab + '-tab');
-            if (target) {
-                target.classList.add('active');
-                if (btn.dataset.tab === 'map-history' && map) {
-                    setTimeout(() => map.invalidateSize(), 150);
+    if (dom.tabBtns) {
+        dom.tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabId = btn.getAttribute('data-tab');
+                console.log("Cambiando a pestaña:", tabId);
+                
+                // Desactivar todo
+                dom.tabBtns.forEach(b => b.classList.remove('active'));
+                dom.tabPanes.forEach(p => p.classList.remove('active'));
+                
+                // Activar actual
+                btn.classList.add('active');
+                const target = document.getElementById(tabId + '-tab');
+                if (target) {
+                    target.classList.add('active');
+                    if (tabId === 'map-history' && map) {
+                        setTimeout(() => map.invalidateSize(), 150);
+                    }
                 }
-            }
-            window.scrollTo(0,0);
-        };
-    });
+                window.scrollTo(0,0);
+            });
+        });
+    }
 
     // Profile Dropdown
     // Profile
@@ -1502,7 +1510,11 @@ async function callAssistantAPI(payload) {
         // En producción, esto llamará a la Edge Function de Supabase
         const response = await fetch(AI_ENDPOINT, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
             body: JSON.stringify(payload)
         });
         return await response.json();

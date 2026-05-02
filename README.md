@@ -6,7 +6,7 @@
 
 ## 🚀 Descripción del Proyecto
 
-**EXPLORADOR PRO** es una aplicación web de alto rendimiento optimizada para dispositivos móviles que permite a los agentes comerciales identificar, gestionar y sincronizar oportunidades de negocio en tiempo real. 
+**EXPLORADOR PRO** es una aplicación web de alto rendimiento optimizada para dispositivos móviles que permite a los agentes comerciales identificar, gestionar y sincronizar oportunidades de negocio en tiempo real.
 
 Utilizando un sistema **"Offline-First"**, la aplicación garantiza que el agente pueda seguir trabajando en zonas con baja conectividad, sincronizando automáticamente los datos con la nube de **Supabase** cuando la conexión se restablece.
 
@@ -29,7 +29,7 @@ Utilizando un sistema **"Offline-First"**, la aplicación garantiza que el agent
 - **Mapas**: Leaflet.js + Nominatim Geocoding API.
 - **Backend**: Supabase (PostgreSQL + Auth + Realtime).
 - **Iconografía**: Lucide Icons.
-- **Utilidades**: 
+- **Utilidades**:
   - `XLSX.js` para exportación de datos.
   - `LZ-String` para compresión de backups locales.
   - `Radial Gradients` & `Keyframe Animations` para el sistema de radar.
