@@ -9,9 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css?v=1.4">
-    <style>
-        .hidden { display: none !important; }
-    </style>
+    <!-- Estilos base inyectados -->
+
     
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -105,6 +104,7 @@
             <button class="tab-link" data-tab="discovery"><i data-lucide="target"></i> EXPLORACIÓN</button>
             <button class="tab-link" data-tab="map-history"><i data-lucide="map"></i> MAPA</button>
             <button class="tab-link" data-tab="leads-list"><i data-lucide="list"></i> HISTORIAL</button>
+            <button class="tab-link" data-tab="ai-assistant"><i data-lucide="bot"></i> ASISTENTE IA</button>
         </nav>
 
         <div id="dropdown-backdrop" class="hidden u-backdrop-dim"></div>
@@ -278,6 +278,46 @@
                 <div id="leads-grid" class="leads-layout"></div>
             </section>
 
+            <!-- Tab 5: AI Assistant -->
+            <section id="ai-assistant-tab" class="tab-pane">
+                <div class="ai-container glass-card">
+                    <div class="ai-header u-mb-15">
+                        <div class="u-flex-center u-gap-1">
+                            <div class="ai-avatar-pulse">
+                                <i data-lucide="bot" class="u-color-yellow"></i>
+                            </div>
+                            <div>
+                                <h2 class="u-color-yellow u-mb-04">Súper Agente Prosegur</h2>
+                                <p class="u-font-tiny u-opacity-06 u-text-uppercase u-tracking-wider">IA Comercial en Tiempo Real</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ai-chat-log" class="ai-chat-log u-mb-15">
+                        <div class="chat-message ai">
+                            <p>¡Hola! Soy tu asistente de ventas de Prosegur. ¿En qué puedo ayudarte hoy? Puedes hacerme preguntas o usar los botones rápidos de abajo.</p>
+                        </div>
+                    </div>
+
+                    <div class="ai-chips-container u-mb-15">
+                        <p class="u-font-tiny u-bold u-opacity-05 u-mb-05 u-text-uppercase">Consultas Rápidas</p>
+                        <div class="ai-chips">
+                            <button class="ai-chip-btn" data-query="objeciones"><i data-lucide="shield-off"></i> Objeciones</button>
+                            <button class="ai-chip-btn" data-query="sector"><i data-lucide="briefcase"></i> Por Sector</button>
+                            <button class="ai-chip-btn" data-query="normativa"><i data-lucide="scale"></i> Normativa</button>
+                            <button class="ai-chip-btn" data-query="competencia"><i data-lucide="users"></i> Competencia</button>
+                            <button class="ai-chip-btn" data-query="whatsapp"><i data-lucide="message-circle"></i> Texto WhatsApp</button>
+                            <button class="ai-chip-btn" data-query="cierre"><i data-lucide="check-square"></i> Técnicas Cierre</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-input-area">
+                        <input type="text" id="ai-input" placeholder="Pregunta algo al agente..." autocomplete="off">
+                        <button id="ai-send-btn" class="btn btn-primary" aria-label="Enviar mensaje"><i data-lucide="send"></i></button>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -291,11 +331,11 @@
                 <div class="u-relative u-cursor-pointer profile-avatar-large" id="trigger-avatar-upload" title="Haz clic para cambiar tu foto">
                     <div id="avatar-preview-container" class="u-w-full u-avatar-wrap">
                         <i data-lucide="user" id="default-avatar-icon"></i>
-                        <img id="user-avatar-img" src="" class="u-w-full hidden u-img-cover" alt="Avatar Usuario">
+                        <img id="user-avatar-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="u-w-full hidden u-img-cover" alt="Avatar Usuario">
                     </div>
                     <div class="avatar-edit-badge"><i data-lucide="camera" class="u-icon-12"></i></div>
                 </div>
-                <input type="file" id="user-avatar-input" accept="image/*" class="hidden">
+                <input type="file" id="user-avatar-input" accept="image/*" class="hidden" aria-label="Subir avatar">
                 <h2 class="u-font-large u-color-yellow u-m-1-02">Ajustes de Perfil</h2>
                 <p class="u-font-small u-opacity-05">Gestiona tu identidad y conexiones</p>
             </div>
@@ -323,7 +363,7 @@
                         <button id="restore-backup-btn" class="btn btn-card-action u-bg-glass-button">
                             <i data-lucide="upload"></i> RESTAURAR COPIA
                         </button>
-                        <input type="file" id="import-backup-input" accept=".json" class="hidden">
+                        <input type="file" id="import-backup-input" accept=".json" class="hidden" aria-label="Importar copia de seguridad">
                     </div>
                     <button id="force-sync-btn" class="btn-sync-now">
                         <i data-lucide="refresh-cw"></i> SUBIR DATOS A SUPABASE
@@ -349,7 +389,7 @@
                 </div>
 
                 <div class="u-mt-2 u-flex-column u-gap-15">
-                    <button id="save-config-btn" class="u-p-12 u-font-medium btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                    <button id="save-config-btn" class="u-p-12 u-font-medium btn btn-primary u-w-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
                     <div class="u-text-center">
                         <p class="u-opacity-05 u-text-uppercase u-font-tiny u-tracking-wider">Versión Explorador Pro 2026.04</p>
                         <p class="u-font-tiny-02 u-opacity-02 u-mt-04">MOVISTAR PROSEGUR ALARMAS - AGENTE EXCLUSIVO</p>
@@ -364,7 +404,7 @@
         <div class="modal-card full">
             <span class="modal-close" id="close-modal">&times;</span>
             <div class="u-mb-15 modal-header-lead modal-header-flex">
-                <input type="text" id="modal-title-input" class="u-border-none u-bg-none u-color-yellow u-bold modal-title-input-fix" title="Nombre del Prospecto">
+                <input type="text" id="modal-title-input" class="u-border-none u-bg-none u-color-yellow u-bold modal-title-input-fix" title="Nombre del Prospecto" aria-label="Nombre del Prospecto">
                 <div class="u-flex-center u-gap-05">
                     <span id="modal-status-badge" class="badge-status-premium">ESTADO</span>
                     <span id="modal-interest-badge" class="u-static u-font-medium badge-interest">--%</span>
@@ -434,7 +474,7 @@
                         <h4>ANÁLISIS DE COMPETENCIA Y NOTAS</h4>
                         <div class="u-mb-05">
                             <label for="modal-alarm-company" class="u-font-tiny u-text-uppercase u-color-yellow u-bold">Compañía de Alarma Actual</label>
-                            <select id="modal-alarm-company" class="u-bold u-mt-05 u-rounded-1 u-color-white u-w-full u-p-08-1 u-bg-glass-button-02" title="Compañía de Alarma Actual">
+                            <select id="modal-alarm-company" class="u-bold u-mt-05 u-rounded-1 u-color-white u-w-full u-p-08-1 u-bg-glass-button-02" title="Compañía de Alarma Actual" aria-label="Seleccionar compañía de alarma">
                                 <option value="NINGUNA" class="u-bg-dark">Ninguna / Desconocida</option>
                                 <option value="PROSEGUR" class="u-bg-dark">Movistar Prosegur Alarmas</option>
                                 <option value="SECURITAS" class="u-bg-dark">Securitas Direct</option>
@@ -445,7 +485,7 @@
                                 <option value="OTROS" class="u-bg-dark">Otros Locales / Regionales</option>
                             </select>
                         </div>
-                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05" title="Observaciones adicionales"></textarea>
+                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05" title="Observaciones adicionales" aria-label="Observaciones adicionales"></textarea>
                     </div>
                 </div>
                 
@@ -461,8 +501,8 @@
                     </div>
                     <div class="u-mt-2 action-buttons u-flex-column u-gap-08">
                         <a id="modal-maps-link" href="#" target="_blank" class="u-color-white btn u-bg-google"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
-                        <button id="save-lead-btn" class="btn btn-primary btn-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
-                        <button id="delete-lead-btn" class="u-mt-1 btn btn-full u-bg-red-dim"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
+                        <button id="save-lead-btn" class="btn btn-primary u-w-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
+                        <button id="delete-lead-btn" class="u-mt-1 btn u-w-full u-bg-red-dim"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
                     </div>
                     <div class="u-font-tiny u-bold u-opacity-05 u-text-center u-mt-15 u-flex-column u-gap-04">
                         <div>ALTA: <span id="modal-created">--</span></div>
@@ -485,8 +525,8 @@
                 <label for="delete-all" class="u-cursor-pointer u-color-danger u-bold"><input type="radio" id="delete-all" name="delete-period" value="all"> ELIMINAR TODO EL HISTORIAL</label>
             </div>
             <div class="u-flex u-gap-08">
-                <button id="cancel-delete-btn" class="btn btn-full u-bg-glass-button">CANCELAR</button>
-                <button id="confirm-delete-btn" class="u-color-danger u-color-white btn btn-full">BORRAR</button>
+                <button id="cancel-delete-btn" class="btn u-w-full u-bg-glass-button">CANCELAR</button>
+                <button id="confirm-delete-btn" class="u-color-danger u-color-white btn u-w-full">BORRAR</button>
             </div>
         </div>
     </div>
@@ -512,7 +552,7 @@
                 </div>
                 
                 <div class="u-flex-column u-gap-1">
-                    <button id="confirm-add-lead-btn" class="u-p-12 u-font-medium btn btn-primary btn-full">
+                    <button id="confirm-add-lead-btn" class="u-p-12 u-font-medium btn btn-primary u-w-full">
                         <i data-lucide="save"></i> GUARDAR EN HISTORIAL
                     </button>
                 </div>
@@ -530,10 +570,9 @@
                     Introduce tu email corporativo para recibir un enlace de restauración.
                 </p>
                 <div class="login-minimal-group u-mb-15">
-                    <label for="forgot-email" class="hidden">Email</label>
-                    <input type="email" id="forgot-email" placeholder="tu-email@prosegur.com" class="u-font-medium u-p-1">
+                    <input type="email" id="forgot-email" placeholder="EMAIL CORPORATIVO" autocomplete="email">
                 </div>
-                <button id="send-reset-btn" class="btn btn-primary btn-full">ENVIAR ENLACE</button>
+                <button id="send-reset-btn" class="btn btn-primary btn-giant">ENVIAR ENLACE</button>
                 <button id="close-forgot-modal" class="u-block u-mt-1 u-w-full link-btn-dim">VOLVER</button>
             </div>
             
@@ -552,7 +591,7 @@
                     Hemos enviado un código de acceso a <br><b id="sent-email-display" class="u-color-white">---</b>.<br><br>
                     Revisa tu bandeja de entrada y la carpeta de spam.
                 </p>
-                <button id="forgot-finish-btn" class="btn btn-primary btn-full">CERRAR</button>
+                <button id="forgot-finish-btn" class="btn btn-primary u-w-full">CERRAR</button>
             </div>
         </div>
     </div>

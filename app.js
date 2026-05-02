@@ -25,6 +25,10 @@ const SUPABASE_URL = 'https://iwxxixyjaxenojckohml.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHhpeHlqYXhlbm9qY2tvaG1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNjEyMjMsImV4cCI6MjA5MjkzNzIyM30.NO3dG4HALVF81bXZoGRsiDxbwuYzi53pjNyGt4O85lA';
 let sb = null;
 
+// --- Configuración IA ---
+const AI_MOCK_MODE = true;
+const AI_ENDPOINT = `${SUPABASE_URL}/functions/v1/prosegur-ai-agent`;
+
 let map = null;
 let userMarker = null;
 let currentLead = null;
@@ -41,7 +45,7 @@ function initDom() {
         
         // Auth
         showLogin: document.getElementById('show-login'),
-        showReg: document.getElementById('show-reg'),
+        showReg: document.getElementById('show-reg-btn'),
         loginFields: document.getElementById('login-fields'),
         regFields: document.getElementById('reg-fields'),
         loginBtn: document.getElementById('login-btn'),
@@ -70,10 +74,7 @@ function initDom() {
         radiusSelect: document.getElementById('radius-select'),
         sectorFilter: document.getElementById('sector-filter'),
         searchInput: document.getElementById('lead-search-input'),
-        interestFilter: document.getElementById('interest-filter'),
-        interestVal: document.getElementById('interest-val'),
         statusFilter: document.getElementById('status-filter'),
-        dateFilter: document.getElementById('date-filter'),
         emptyState: document.getElementById('empty-state'),
         leadsContainer: document.getElementById('leads-container'),
         
@@ -169,7 +170,13 @@ function initDom() {
         cloudSyncStatus: document.getElementById('cloud-sync-status'),
         forceSyncBtn: document.getElementById('force-sync-btn'),
         downloadCloudBtn: document.getElementById('download-cloud-btn'),
-        lastSyncText: document.getElementById('last-sync-text')
+        lastSyncText: document.getElementById('last-sync-text'),
+
+        // AI Assistant
+        aiChatLog: document.getElementById('ai-chat-log'),
+        aiInput: document.getElementById('ai-input'),
+        aiSendBtn: document.getElementById('ai-send-btn'),
+        aiChips: document.querySelectorAll('.ai-chip-btn')
     };
 }
 
@@ -270,6 +277,33 @@ function setupEventListeners() {
     if (dom.closeAddModal) dom.closeAddModal.onclick = () => dom.addLeadModal.classList.remove('active');
     if (dom.confirmAddLeadBtn) dom.confirmAddLeadBtn.onclick = saveNewManualLead;
     if (dom.deleteLeadBtn) dom.deleteLeadBtn.onclick = deleteCurrentLead;
+
+    // AI Assistant Events
+    if (dom.aiSendBtn) {
+        dom.aiSendBtn.onclick = () => handleAIQuery(dom.aiInput.value);
+    }
+    if (dom.aiInput) {
+        dom.aiInput.onkeypress = (e) => {
+            if (e.key === 'Enter') handleAIQuery(dom.aiInput.value);
+        };
+    }
+    if (dom.aiChips) {
+        dom.aiChips.forEach(chip => {
+            chip.onclick = () => {
+                const query = chip.dataset.query;
+                let text = "";
+                switch(query) {
+                    case 'objeciones': text = "Dime cómo rebatir las objeciones más comunes."; break;
+                    case 'sector': text = "Dame argumentos de venta por sector."; break;
+                    case 'normativa': text = "Explícame la normativa de seguridad privada."; break;
+                    case 'competencia': text = "Comparativa contra la competencia."; break;
+                    case 'whatsapp': text = "Escribe un mensaje de WhatsApp para un cliente."; break;
+                    case 'cierre': text = "Enséñame técnicas de cierre comercial."; break;
+                }
+                handleAIQuery(text);
+            };
+        });
+    }
 
     // Tabs
     dom.tabBtns.forEach(btn => {
@@ -388,14 +422,7 @@ function setupEventListeners() {
     if (dom.radiusSelect) dom.radiusSelect.onchange = handleFiltering;
     if (dom.sectorFilter) dom.sectorFilter.onchange = handleFiltering;
     if (dom.searchInput) dom.searchInput.oninput = handleFiltering;
-    if (dom.interestFilter) {
-        dom.interestFilter.oninput = (e) => {
-            if (dom.interestVal) dom.interestVal.innerText = e.target.value + '%';
-            handleFiltering();
-        };
-    }
     if (dom.statusFilter) dom.statusFilter.onchange = handleFiltering;
-    if (dom.dateFilter) dom.dateFilter.onchange = handleFiltering;
     if (dom.historyStatusFilter) dom.historyStatusFilter.onchange = renderLeads;
 
     // Map Extra Controls
@@ -435,19 +462,6 @@ function setupEventListeners() {
         });
     }
 
-    // Tools
-    if (dom.exportExcelBtn) dom.exportExcelBtn.onclick = exportToExcel;
-    if (dom.exportAirtableBtn) dom.exportAirtableBtn.onclick = exportToAirtable;
-    if (dom.navDeleteBtn) dom.navDeleteBtn.onclick = () => dom.historyDeleteModal.classList.add('active');
-    if (dom.cancelDeleteBtn) dom.cancelDeleteBtn.onclick = () => dom.historyDeleteModal.classList.remove('active');
-    if (dom.confirmDeleteBtn) {
-        dom.confirmDeleteBtn.onclick = () => {
-            const periodInput = document.querySelector('input[name="delete-period"]:checked');
-            const period = periodInput ? periodInput.value : 'today';
-            executeSelectiveDelete(period);
-            dom.historyDeleteModal.classList.remove('active');
-        };
-    }
 }
 
 // --- Lógica de Auth ---
@@ -712,11 +726,15 @@ async function generateLeads(lat, lng, r) {
         const sector = tags.amenity || tags.shop || "Comercial";
         const address = tags['addr:street'] ? (tags['addr:street'] + ' ' + (tags['addr:housenumber'] || '')) : "Dirección no disponible";
         
-        // Calcular interés simulado avanzado
-        let interest = 40 + Math.floor(Math.random() * 40);
-        if (tags.phone) interest += 10;
-        if (tags.website) interest += 10;
-        if (interest > 100) interest = 100;
+        // Lógica de interés refinada (simulando análisis previo IA)
+        let interest = 50; 
+        const highRiskSectors = ['banco', 'joyería', 'estanco', 'farmacia', 'clínica', 'restaurante'];
+        if (highRiskSectors.some(s => sector.toLowerCase().includes(s))) interest += 20;
+        if (tags.phone) interest += 5;
+        if (tags.website) interest += 5;
+        if (tags.opening_hours) interest += 5;
+        interest += Math.floor(Math.random() * 10); // Variabilidad
+        if (interest > 98) interest = 98; // Dejar margen para el análisis manual 100%
 
         return {
             id,
@@ -760,23 +778,22 @@ function renderLeads() {
         radius: dom.radiusSelect ? parseInt(dom.radiusSelect.value) : 1000,
         sector: dom.sectorFilter ? dom.sectorFilter.value : 'all',
         search: dom.searchInput ? dom.searchInput.value.toLowerCase() : '',
-        interest: dom.interestFilter ? parseInt(dom.interestFilter.value) : 0,
-        status: dom.statusFilter ? dom.statusFilter.value : 'all',
-        date: dom.dateFilter ? dom.dateFilter.value : 'all'
+        status: dom.statusFilter ? dom.statusFilter.value : 'all'
     };
 
     const filtered = state.leads.filter(l => {
         if (filters.sector !== 'all' && !l.sector.toLowerCase().includes(filters.sector.toLowerCase())) return false;
         if (filters.search && !l.name.toLowerCase().includes(filters.search) && !l.address.toLowerCase().includes(filters.search) && !(l.cif && l.cif.toLowerCase().includes(filters.search))) return false;
-        if (l.interest < filters.interest) return false;
         if (filters.status !== 'all' && l.status !== filters.status) return false;
         
-        if (filters.date === 'recent') {
-            const parts = l.date.split('/');
-            const date = new Date(parts[2], parts[1]-1, parts[0]);
-            if ((Date.now() - date.getTime()) > 7*24*60*60*1000) return false;
-        }
         return true;
+    });
+
+    // Ordenar por fecha (descendente) de forma robusta
+    filtered.sort((a, b) => {
+        const da = a.date.includes('/') ? new Date(a.date.split('/').reverse().join('-')) : new Date(a.date);
+        const db = b.date.includes('/') ? new Date(b.date.split('/').reverse().join('-')) : new Date(b.date);
+        return db - da;
     });
 
     dom.leadsContainer.innerHTML = '';
@@ -847,8 +864,8 @@ function createLeadCard(lead) {
             <button class="btn btn-outline u-fs-0-7 u-p-08" onclick="window.openLeadByID('${lead.id}')">
                 <i data-lucide="info" class="u-icon-14"></i> DETALLES
             </button>
-            <button class="btn btn-primary u-fs-0-7 u-p-08" onclick="window.open('https://www.google.com/maps?q=${lead.lat},${lead.lng}', '_blank')">
-                <i data-lucide="navigation" class="u-icon-14"></i> MAPS
+            <button class="btn btn-primary u-fs-0-7 u-p-08" onclick="window.analyzeLeadWithAI('${lead.id}')">
+                <i data-lucide="bot" class="u-icon-14"></i> ANALIZAR IA
             </button>
         </div>
     `;
@@ -1450,3 +1467,122 @@ async function downloadFromSupabase() {
         }
     }
 }
+
+// --- Lógica del Asistente IA ---
+
+async function callAssistantAPI(payload) {
+    if (AI_MOCK_MODE) {
+        console.log("🤖 MOCK_MODE: Simulando llamada a la API con payload:", payload);
+        return new Promise(resolve => {
+            setTimeout(() => {
+                let response = "";
+                const q = payload.query ? payload.query.toLowerCase() : "";
+                
+                if (q.includes("objecion")) response = "Para la objeción 'Ya tengo alarma', recuerda destacar que Movistar Prosegur ofrece Triple Seguridad (Antihurto, Anti-Inhibición y Anti-Sabotaje) y que somos la única con la Red de Custodios propia.";
+                else if (q.includes("sector")) response = "En el sector de hostelería, el punto clave es el control de empleados y la seguridad nocturna. Destaca nuestras cámaras inteligentes con analítica de vídeo.";
+                else if (q.includes("normativa")) response = "La Ley de Seguridad Privada exige que cualquier sistema conectado a central deba ser instalado por una empresa homologada como Prosegur. Esto evita multas al propietario.";
+                else if (q.includes("competencia")) response = "Contra Securitas, destaca que nosotros no cobramos por el mantenimiento de la batería y que nuestra respuesta de patrulla es un 30% más rápida en zonas urbanas.";
+                else if (q.includes("whatsapp")) response = "Texto sugerido: 'Hola [Nombre], soy Santiago de Prosegur. He pasado por tu local y me gustaría comentarte un punto de mejora en seguridad que he detectado. ¿Te viene bien mañana a las 10:00?'";
+                else if (q.includes("cierre")) response = "Usa el cierre de alternativa: '¿Prefieres que la instalación la hagamos el martes por la mañana o el miércoles por la tarde?'";
+                else if (payload.action === 'analyze_lead') {
+                    resolve({
+                        probability: 85,
+                        level: "Alto",
+                        reasons: ["Ubicación en zona caliente", "Sin sistema visible", "Sector de alto riesgo"],
+                        risks: ["Posible contrato previo no detectado"],
+                        advice: "Céntrate en la protección de escaparates."
+                    });
+                    return;
+                }
+                else response = "Entiendo perfectamente. Mi recomendación es que enfoques la venta en el valor de la placa de Prosegur como elemento disuasorio número uno en España.";
+
+                resolve({ response });
+            }, 1500);
+        });
+    }
+
+    try {
+        // En producción, esto llamará a la Edge Function de Supabase
+        const response = await fetch(AI_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        return await response.json();
+    } catch (err) {
+        console.error("Error AI API:", err);
+        return { error: "No se pudo conectar con el asistente." };
+    }
+}
+
+function addChatMessage(text, type) {
+    if (!dom.aiChatLog) return;
+    const msg = document.createElement('div');
+    msg.className = `chat-message ${type}`;
+    msg.innerHTML = `<p>${text}</p>`;
+    dom.aiChatLog.appendChild(msg);
+    dom.aiChatLog.scrollTop = dom.aiChatLog.scrollHeight;
+}
+
+async function handleAIQuery(text) {
+    if (!text.trim()) return;
+    
+    addChatMessage(text, 'user');
+    dom.aiInput.value = "";
+    
+    const thinkingMsg = document.createElement('div');
+    thinkingMsg.className = 'chat-message ai thinking';
+    thinkingMsg.innerHTML = '<p><i class="lucide-loader spin"></i> El agente está pensando...</p>';
+    dom.aiChatLog.appendChild(thinkingMsg);
+    if (window.lucide) lucide.createIcons();
+    dom.aiChatLog.scrollTop = dom.aiChatLog.scrollHeight;
+
+    const result = await callAssistantAPI({ query: text, action: 'chat' });
+    
+    thinkingMsg.remove();
+    if (result.error) {
+        addChatMessage("Lo siento, he tenido un problema al conectar. Prueba de nuevo en un momento.", 'ai');
+    } else {
+        addChatMessage(result.response || "No he podido procesar esa consulta.", 'ai');
+    }
+}
+
+async function analyzeLeadWithAI(leadId) {
+    const lead = state.leads.find(l => l.id === leadId);
+    if (!lead) return;
+
+    // Abrir pestaña IA
+    const aiTabBtn = document.querySelector('[data-tab="ai-assistant"]');
+    if (aiTabBtn) aiTabBtn.click();
+    
+    addChatMessage(`Analizando lead: **${lead.name}**...`, 'user');
+    
+    const result = await callAssistantAPI({ 
+        action: 'analyze_lead',
+        lead_data: {
+            name: lead.name,
+            sector: lead.sector,
+            address: lead.address,
+            alarm: lead.alarm,
+            notes: lead.services
+        }
+    });
+
+    if (result.probability) {
+        lead.interest = result.probability;
+        saveToDisk();
+        renderLeads();
+        updateStats();
+        
+        let report = `### Análisis Final: ${result.level}\n\n`;
+        report += `**Probabilidad:** ${result.probability}%\n`;
+        report += `**Razones:** ${result.reasons.join(", ")}\n`;
+        report += `**Consejo:** ${result.advice}`;
+        
+        addChatMessage(report.replace(/\n/g, '<br>'), 'ai');
+    } else {
+        addChatMessage("No he podido realizar el análisis técnico de este lead.", 'ai');
+    }
+}
+
+window.analyzeLeadWithAI = analyzeLeadWithAI;
