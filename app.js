@@ -373,10 +373,9 @@ function setupEventListeners() {
     
     if (dom.openConfig) {
         dom.openConfig.onclick = () => {
-            console.log("Abriendo configuración...", state.config, state.user);
             if (dom.configModal) dom.configModal.classList.add('active');
             if (dom.userPhone) dom.userPhone.value = state.config.phone || '';
-            if (dom.userEmailDisplay) dom.userEmailDisplay.value = state.config.email || state.user.name || '';
+            if (dom.userEmailDisplay) dom.userEmailDisplay.value = state.config.email || state.user?.name || '';
             if (dom.airBase) dom.airBase.value = state.config.base || '';
             if (dom.airToken) dom.airToken.value = state.config.token || '';
             if (dom.userDropdown) dom.userDropdown.classList.remove('active');
@@ -433,7 +432,6 @@ function setupEventListeners() {
             dom.toggleManualBtn.classList.toggle('active', state.manualMode);
             if (dom.addManualLeadBtn) dom.addManualLeadBtn.classList.remove('active');
             dom.toggleManualBtn.querySelector('span').innerText = state.manualMode ? 'MANUAL: ON' : 'MANUAL: OFF';
-            console.log("Modo Manual:", state.manualMode);
         };
     }
 
@@ -1030,9 +1028,9 @@ function updateStats() {
 }
 
 function saveToDisk() {
+    if (!state.user || !state.user.name) return;
     try {
         localStorage.setItem('pro_leads_' + state.user.name, JSON.stringify(state.leads));
-        console.log("Datos guardados correctamente: " + state.leads.length + " prospectos.");
         
         // Actualizar indicador a PENDIENTE (Recordatorio para el usuario)
         if (dom.cloudSyncStatus) {
@@ -1132,7 +1130,6 @@ function executeSelectiveDelete(period) {
 
 // --- Exportación ---
 function exportToExcel() {
-    console.log("Iniciando exportación Excel...", state.leads.length);
     if (state.leads.length === 0) return alert("No hay datos para exportar.");
     
     // Preparar datos para SheetJS

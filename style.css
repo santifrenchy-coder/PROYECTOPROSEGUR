@@ -947,3 +947,8 @@ input[readonly] {
 .u-opacity-02 { opacity: 0.2 !important; }
 .u-mt-04 { margin-top: 0.4rem !important; }
 .u-icon-18 { width: 18px !important; height: 18px !important; }
+.u-tracking-widest { letter-spacing: 4px !important; }
+.u-anim-pulse { animation: pulseAnim 2s infinite !important; }
+.u-opacity-07 { opacity: 0.7 !important; }
+.u-opacity-08 { opacity: 0.8 !important; }
+.u-lh-16 { line-height: 1.6 !important; }

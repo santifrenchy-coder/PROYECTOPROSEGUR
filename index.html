@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Explorador Comercial Premium para Movistar Prosegur Alarmas. Gestión de prospectos, análisis IA y geolocalización avanzada.">
     <title>EXPLORADOR PRO | Movistar Prosegur Alarmas</title>
     
     <!-- CSS & Fonts -->
@@ -562,36 +563,43 @@
 
     <!-- Forgot Password Modal -->
     <div id="forgot-password-modal" class="modal">
-        <div class="modal-card mini u-text-center">
+        <div class="modal-card mini u-text-center profile-modal-card">
+            <span class="modal-close" id="close-forgot-modal">&times;</span>
+            
             <div id="forgot-init-state">
-                <div class="u-font-giant u-p-1 u-color-yellow"><i data-lucide="shield-alert"></i></div>
-                <h2 class="u-mb-1 u-color-yellow">Recuperación de Clave</h2>
-                <p class="u-opacity-08 u-lh-16 u-font-medium u-mb-15">
-                    Introduce tu email corporativo para recibir un enlace de restauración.
+                <div class="u-font-giant u-p-1 u-color-yellow u-anim-pulse"><i data-lucide="shield-alert"></i></div>
+                <h2 class="u-mb-1 u-color-yellow u-tracking-wider">RECUPERACIÓN DE CLAVE</h2>
+                <p class="u-opacity-07 u-lh-16 u-font-small u-mb-2">
+                    Introduce tu email corporativo para recibir un enlace de restauración seguro.
                 </p>
-                <div class="login-minimal-group u-mb-15">
-                    <input type="email" id="forgot-email" placeholder="EMAIL CORPORATIVO" autocomplete="email">
+                <div class="login-minimal-group u-mb-2">
+                    <div class="input-group u-text-left">
+                        <label for="forgot-email" class="u-font-tiny u-opacity-05 u-mb-05">EMAIL CORPORATIVO</label>
+                        <input type="email" id="forgot-email" placeholder="usuario@prosegur.com" autocomplete="email" class="u-w-full">
+                    </div>
                 </div>
-                <button id="send-reset-btn" class="btn btn-primary btn-giant">ENVIAR ENLACE</button>
-                <button id="close-forgot-modal" class="u-block u-mt-1 u-w-full link-btn-dim">VOLVER</button>
+                <button id="send-reset-btn" class="btn btn-primary btn-giant u-w-full"><i data-lucide="send"></i> ENVIAR ENLACE</button>
             </div>
             
             <div id="forgot-sending-state" class="hidden">
-                <div class="u-p-2">
+                <div class="u-p-3">
                     <div class="loader-ring"></div>
-                    <p class="u-color-yellow u-mt-15 u-bold">ENVIANDO ENLACE...</p>
-                    <p class="u-font-small u-opacity-05">Verificando servidor de Prosegur</p>
+                    <p class="u-color-yellow u-mt-2 u-bold u-tracking-widest">VERIFICANDO...</p>
+                    <p class="u-font-tiny u-opacity-05 u-mt-05">Conectando con Servidores de Seguridad</p>
                 </div>
             </div>
 
             <div id="forgot-success-state" class="hidden">
                 <div class="u-font-giant u-p-1 u-color-success"><i data-lucide="check-circle"></i></div>
-                <h2 class="u-mb-1 u-color-success">¡ENVIADO!</h2>
+                <h2 class="u-mb-1 u-color-success u-tracking-wider">¡ENLACE ENVIADO!</h2>
                 <p class="u-opacity-08 u-mb-2 u-lh-16 u-font-medium">
-                    Hemos enviado un código de acceso a <br><b id="sent-email-display" class="u-color-white">---</b>.<br><br>
-                    Revisa tu bandeja de entrada y la carpeta de spam.
+                    Hemos enviado las instrucciones a:<br>
+                    <b id="sent-email-display" class="u-color-yellow u-block u-mt-05">---</b>
                 </p>
-                <button id="forgot-finish-btn" class="btn btn-primary u-w-full">CERRAR</button>
+                <div class="u-bg-glass-card-02 u-p-1 u-rounded-1 u-mb-2">
+                    <p class="u-font-tiny u-opacity-06">Revisa tu bandeja de entrada y la carpeta de spam. El enlace caduca en 15 minutos.</p>
+                </div>
+                <button id="forgot-finish-btn" class="btn btn-primary u-w-full">VOLVER AL LOGIN</button>
             </div>
         </div>
     </div>
