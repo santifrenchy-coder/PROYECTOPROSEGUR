@@ -6,8 +6,10 @@ Aquí tienes el informe técnico documental, de trazabilidad, arquitectura y rie
 
 ---
 
-# 🛡️ INFORME FINAL — BLOQUE 14 / CIERRE OFICIAL FASE 1
+## 🛡️ INFORME FINAL — BLOQUE 14 / CIERRE OFICIAL FASE 1
+
 ### PROYECTO: EXPLORADOR PRO | Movistar Prosegur Alarmas
+
 **FECHA:** 7 de Mayo de 2026  
 **ESTADO:** COMPLETO / CONGELADO  
 
@@ -15,7 +17,7 @@ Aquí tienes el informe técnico documental, de trazabilidad, arquitectura y rie
 
 ## A) Resumen Ejecutivo
 
-El **Proyecto Explorador Prosegur** ha culminado con total éxito su **Fase 1 (Foundational & Field Ready)**. A lo largo de esta fase, se ha conceptualizado, desarrollado, estabilizado y validado en campo una herramienta web móvil de alta precisión, diseñada específicamente para los agentes comerciales de Movistar Prosegur Alarmas. 
+El **Proyecto Explorador Prosegur** ha culminado con total éxito su **Fase 1 (Foundational & Field Ready)**. A lo largo de esta fase, se ha conceptualizado, desarrollado, estabilizado y validado en campo una herramienta web móvil de alta precisión, diseñada específicamente para los agentes comerciales de Movistar Prosegur Alarmas.
 
 La aplicación permite la prospección de calle mediante un modelo híbrido **Offline-First**, geolocalización por radar con Overpass API, análisis estratégico asistido por Inteligencia Artificial y backup cloud automatizado. Todas las fases de diseño premium y lógica core han sido consolidadas sin linter warnings y con un consumo de recursos altamente optimizado.
 
@@ -26,11 +28,11 @@ La aplicación permite la prospección de calle mediante un modelo híbrido **Of
 | Bloque | Descripción | Estado | Validación |
 | :---: | :--- | :---: | :---: |
 | **Bloque 11** | Buscador Global Nominatim, Hitboxes y Menús de Dispositivos | **VALIDADO** | Integrado en style.css e index.html, verificado en móviles. |
-| **Bloque 11B**| Control de Clics Duplicados en Tarjetas (Separación Detalle/Modal) | **VALIDADO** | Lógica depurada en app.js para evitar rebotes de eventos táctiles. |
+| **Bloque 11B** | Control de Clics Duplicados en Tarjetas (Separación Detalle/Modal) | **VALIDADO** | Lógica depurada en app.js para evitar rebotes de eventos táctiles. |
 | **Bloque 12** | Formulario Modal Extendido (CP, Población, RRSS, Alarma) | **VALIDADO** | Integración de 4 campos nuevos y sincronización de color de badges. |
 | **Bloque 13** | Pruebas de Campo en Calle | **SUPERADO** | Usabilidad móvil validada bajo luz de sol y baja conectividad. |
-| **Bloque 13B**| Estabilización y Pulido Post-Campo | **COMPLETADO** | Ajuste colapsable de Consultas Rápidas y Dictado por Voz (Micrófono). |
-| **Bloque 13C**| Auditoría Técnica Final Post-Cambios | **VALIDADO** | Verificación de 20 puntos de seguridad, red y consola libre de errores. |
+| **Bloque 13B** | Estabilización y Pulido Post-Campo | **COMPLETADO** | Ajuste colapsable de Consultas Rápidas y Dictado por Voz (Micrófono). |
+| **Bloque 13C** | Auditoría Técnica Final Post-Cambios | **VALIDADO** | Verificación de 20 puntos de seguridad, red y consola libre de errores. |
 | **Bloque 14** | Cierre Oficial, Trazabilidad e Informe de Fase 1 | **CERRADO** | Registro de arquitectura, riesgos, rollback y plan de Fase 2. |
 
 ---
@@ -150,7 +152,7 @@ graph TD
 
 1. **Prueba de Brillo y Contraste:** Comprobación del fondo oscuro y las tipografías amarillas Prosegur bajo luz directa del sol. Superado con alta legibilidad.
 2. **Prueba de Doble Clic:** Mitigación completa de clics duplicados accidentales al deslizar la lista lateral. Superado.
-3. **Prueba de Reducción de Red:** Simulación de modo avión en móviles. El comercial pudo añadir 10 leads, cambiar sus estados, y al reconectar el wifi, subió todo a Supabase pulsando un botón sin perder un solo de información. Superado.
+3. **Prueba de Reducción de Red:** Simulación de modo avión en móviles. El comercial pudo añadir 10 leads, cambiar sus estados, y al reconectar el wifi, subió todo a Supabase pulsando un botón sin perder un solo bit de información. Superado.
 
 ---
 
@@ -174,10 +176,12 @@ graph TD
 En caso de detectarse alguna anomalía en la versión de producción desplegada en GitHub Pages, el comercial puede volver al estado estable anterior mediante las siguientes directrices:
 
 1. **Reversión a Tag Estable Anterior (Git):**
+
    ```bash
    git checkout tags/v1.0-campo-estable
    git push origin main --force
    ```
+
 2. **Copia de Seguridad en Navegador:** Antes de cualquier cambio o si el navegador actúa de forma inconsistente, el comercial puede acceder a **Ajustes de Perfil -> Copia Seguridad** para descargar un `.json` con toda su base de datos local y restaurarlo instantáneamente en cualquier otro dispositivo móvil.
 
 ---
