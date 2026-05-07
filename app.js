@@ -423,7 +423,11 @@ function setupEventListeners() {
     }
     if (dom.geoBtn) dom.geoBtn.onclick = () => handleGeolocation(true); // Actualizar zona (Buscar)
     if (dom.resetMapBtn) dom.resetMapBtn.onclick = () => handleGeolocation(false); // Solo Centrado GPS
-    if (dom.forceGpsBtn) dom.forceGpsBtn.onclick = () => handleGeolocation(true); // Buscar Aquí
+    if (dom.forceGpsBtn) dom.forceGpsBtn.onclick = () => {
+        if (!map) return;
+        const center = map.getCenter();
+        onLocalSuccess(center.lat, center.lng, true);
+    }; // Buscar Aquí (Usa el centro del mapa)
     
     if (dom.radiusSelect) dom.radiusSelect.onchange = handleFiltering;
     if (dom.sectorFilter) dom.sectorFilter.onchange = handleFiltering;
@@ -689,26 +693,33 @@ async function generateLeads(lat, lng, r) {
 
     const query = `[out:json][timeout:25];
         (
-          node["amenity"~"restaurant|cafe|pharmacy|gym|clinic|bank|pub|hospital|bar|cinema"](around:${r},${lat},${lng});
-          way["amenity"~"restaurant|cafe|pharmacy|gym|clinic|bank|pub|hospital|bar|cinema"](around:${r},${lat},${lng});
-          node["shop"~"clothes|supermarket|beauty|bakery|hairdresser|convenience|kiosk|mobile_phone"](around:${r},${lat},${lng});
-          way["shop"~"clothes|supermarket|beauty|bakery|hairdresser|convenience|kiosk|mobile_phone"](around:${r},${lat},${lng});
+          node["shop"](around:${r},${lat},${lng});
+          way["shop"](around:${r},${lat},${lng});
+          node["office"](around:${r},${lat},${lng});
+          way["office"](around:${r},${lat},${lng});
+          node["craft"](around:${r},${lat},${lng});
+          way["craft"](around:${r},${lat},${lng});
+          node["amenity"~"restaurant|cafe|fast_food|bar|pub|pharmacy|clinic|hospital|dentist|veterinary|bank|atm|car_rental|car_wash|fuel"](around:${r},${lat},${lng});
+          way["amenity"~"restaurant|cafe|fast_food|bar|pub|pharmacy|clinic|hospital|dentist|veterinary|bank|atm|car_rental|car_wash|fuel"](around:${r},${lat},${lng});
         );
         out center body;`;
 
     let data = null;
     for (let url of mirrors) {
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos máximo por mirror
             const response = await fetch(url, {
                 method: 'POST',
                 body: "data=" + encodeURIComponent(query),
-                timeout: 5000
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
             if (response.ok) {
                 data = await response.json();
                 break;
             }
-        } catch(e) { console.warn("Mirror fallido: " + url); }
+        } catch(e) { console.warn("Mirror fallido o lento: " + url); }
     }
 
     if (!data || !data.elements || data.elements.length === 0) {
@@ -886,18 +897,15 @@ function renderMapPins() {
     markersLayer.clearLayers();
     
     state.leads.forEach(l => {
-        let color = '#FED000'; // Gold standard
-        if (l.interest >= 90) color = '#ef4444'; // Muy alto potencial (Rojo Prosegur)
-        else if (l.interest >= 75) color = '#f97316'; // Alto potencial (Naranja)
-        
-        if (l.status === 'seguimiento') color = '#fce7d2';
-        if (l.status === 'firmado') color = '#22c55e';
-        if (l.status === 'descartado') color = '#64748b'; // Gris para descartados
+        let color = '#FED000'; // Visita (Yellow)
+        if (l.status === 'seguimiento') color = '#f97316';
+        else if (l.status === 'firmado') color = '#22c55e';
+        else if (l.status === 'descartado') color = '#e2e8f0'; // Bright silver/white para que destaque
         
         const pin = L.circleMarker([l.lat, l.lng], {
-            radius: l.interest >= 80 ? 10 : 7, // Más grandes los de alto interés
+            radius: l.interest >= 80 ? 10 : 7, // Tamaño indica interés
             fillColor: color,
-            color: '#fff',
+            color: '#ffffff',
             weight: 2,
             opacity: 1,
             fillOpacity: 0.9
@@ -1310,6 +1318,14 @@ function deleteCurrentLead() {
     renderMapPins();
     updateStats();
     dom.modal.classList.remove('active');
+}
+
+window.searchLeadWeb = function() {
+    if (!currentLead) return;
+    const location = currentLead.city || currentLead.address || "";
+    const query = `${currentLead.name} ${location} contacto email instagram facebook`.trim();
+    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    window.open(url, '_blank');
 }
 
 // --- Integración Supabase (Offline-First Backup) ---

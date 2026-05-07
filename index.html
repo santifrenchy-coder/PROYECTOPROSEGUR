@@ -486,7 +486,10 @@
                                 <option value="OTROS" class="u-bg-dark">Otros Locales / Regionales</option>
                             </select>
                         </div>
-                        <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-05" title="Observaciones adicionales" aria-label="Observaciones adicionales"></textarea>
+                        <div class="u-mt-15">
+                            <label for="modal-services" class="u-font-tiny u-text-uppercase u-color-yellow u-bold">Observaciones</label>
+                            <textarea id="modal-services" rows="4" placeholder="Observaciones, presupuesto ofrecido, necesidades detectadas..." class="u-bold u-mt-05 u-p-1 u-rounded-1 u-color-white u-w-full u-bg-dark-glass" title="Observaciones adicionales" aria-label="Observaciones adicionales"></textarea>
+                        </div>
                     </div>
                 </div>
                 
@@ -502,6 +505,7 @@
                     </div>
                     <div class="u-mt-2 action-buttons u-flex-column u-gap-08">
                         <a id="modal-maps-link" href="#" target="_blank" class="u-color-white btn u-bg-google"><i data-lucide="map"></i> VER EN GOOGLE MAPS</a>
+                        <button id="search-web-btn" class="btn btn-outline u-w-full" onclick="window.searchLeadWeb()"><i data-lucide="search"></i> BUSCAR DATOS EN WEB</button>
                         <button id="save-lead-btn" class="btn btn-primary u-w-full"><i data-lucide="save"></i> GUARDAR CAMBIOS</button>
                         <button id="delete-lead-btn" class="u-mt-1 btn u-w-full u-bg-red-dim"><i data-lucide="trash-2"></i> ELIMINAR PROSPECTO</button>
                     </div>
