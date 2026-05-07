@@ -176,7 +176,11 @@ function initDom() {
         aiChatLog: document.getElementById('ai-chat-log'),
         aiInput: document.getElementById('ai-input'),
         aiSendBtn: document.getElementById('ai-send-btn'),
-        aiChips: document.querySelectorAll('.ai-chip-btn')
+        aiChips: document.querySelectorAll('.ai-chip-btn'),
+        toggleChipsBtn: document.getElementById('toggle-chips-btn'),
+        chipsContent: document.getElementById('chips-content'),
+        chipsChevron: document.getElementById('chips-chevron'),
+        aiMicBtn: document.getElementById('ai-mic-btn')
     };
 }
 
@@ -196,6 +200,7 @@ function bootstrapApp() {
         }
 
         setupEventListeners();
+        initVoiceRecognition();
         initAuth();
         
         if (typeof lucide !== 'undefined') {
@@ -279,6 +284,15 @@ function setupEventListeners() {
     if (dom.deleteLeadBtn) dom.deleteLeadBtn.onclick = deleteCurrentLead;
 
     // AI Assistant Events
+    if (dom.toggleChipsBtn) {
+        dom.toggleChipsBtn.onclick = () => {
+            if (dom.chipsContent) {
+                const isHidden = dom.chipsContent.classList.toggle('hidden');
+                dom.toggleChipsBtn.classList.toggle('expanded', !isHidden);
+            }
+        };
+    }
+
     if (dom.aiSendBtn) {
         dom.aiSendBtn.onclick = () => handleAIQuery(dom.aiInput.value);
     }
@@ -1622,3 +1636,71 @@ async function analyzeLeadWithAI(leadId) {
 }
 
 window.analyzeLeadWithAI = analyzeLeadWithAI;
+
+let speechRecognition = null;
+let isListening = false;
+
+function initVoiceRecognition() {
+    if (!dom.aiMicBtn) return;
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn("Web Speech API no está soportada en este navegador.");
+        dom.aiMicBtn.title = "Dictado de voz no soportado en este navegador";
+        dom.aiMicBtn.style.opacity = "0.3";
+        dom.aiMicBtn.style.cursor = "not-allowed";
+        dom.aiMicBtn.onclick = () => {
+            alert("El dictado por voz no está soportado en este navegador. Te recomendamos usar Google Chrome o Safari.");
+        };
+        return;
+    }
+    
+    speechRecognition = new SpeechRecognition();
+    speechRecognition.continuous = false; // Detener cuando el usuario deja de hablar
+    speechRecognition.interimResults = false; // Solo resultados finales
+    speechRecognition.lang = 'es-ES'; // Idioma español
+    
+    speechRecognition.onstart = () => {
+        isListening = true;
+        dom.aiMicBtn.classList.add('listening');
+        if (dom.aiInput) dom.aiInput.placeholder = "Escuchando... Habla ahora";
+    };
+    
+    speechRecognition.onend = () => {
+        isListening = false;
+        dom.aiMicBtn.classList.remove('listening');
+        if (dom.aiInput) dom.aiInput.placeholder = "Pregunta algo al agente...";
+    };
+    
+    speechRecognition.onerror = (e) => {
+        console.error("Speech Recognition Error:", e);
+        isListening = false;
+        dom.aiMicBtn.classList.remove('listening');
+        if (dom.aiInput) dom.aiInput.placeholder = "Pregunta algo al agente...";
+        
+        if (e.error === 'not-allowed') {
+            alert("Permiso de micrófono denegado. Por favor, habilita el acceso al micrófono en los ajustes de tu navegador.");
+        }
+    };
+    
+    speechRecognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        if (dom.aiInput) {
+            const currentText = dom.aiInput.value.trim();
+            dom.aiInput.value = currentText ? `${currentText} ${transcript}` : transcript;
+            dom.aiInput.focus();
+        }
+    };
+    
+    dom.aiMicBtn.onclick = () => {
+        if (isListening) {
+            speechRecognition.stop();
+        } else {
+            try {
+                speechRecognition.start();
+            } catch (err) {
+                console.error("Error al iniciar reconocimiento:", err);
+            }
+        }
+    };
+}

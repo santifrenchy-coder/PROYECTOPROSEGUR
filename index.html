@@ -301,18 +301,24 @@
                     </div>
 
                     <div class="ai-chips-container u-mb-15">
-                        <p class="u-font-tiny u-bold u-opacity-05 u-mb-05 u-text-uppercase">Consultas Rápidas</p>
-                        <div class="ai-chips">
-                            <button class="ai-chip-btn" data-query="objeciones"><i data-lucide="shield-off"></i> Objeciones</button>
-                            <button class="ai-chip-btn" data-query="sector"><i data-lucide="briefcase"></i> Por Sector</button>
-                            <button class="ai-chip-btn" data-query="normativa"><i data-lucide="scale"></i> Normativa</button>
-                            <button class="ai-chip-btn" data-query="competencia"><i data-lucide="users"></i> Competencia</button>
-                            <button class="ai-chip-btn" data-query="whatsapp"><i data-lucide="message-circle"></i> Texto WhatsApp</button>
-                            <button class="ai-chip-btn" data-query="cierre"><i data-lucide="check-square"></i> Técnicas Cierre</button>
+                        <div class="ai-chips-header" id="toggle-chips-btn" title="Ver consultas rápidas">
+                            <span class="u-font-tiny u-bold u-opacity-05 u-text-uppercase">Consultas Rápidas</span>
+                            <i data-lucide="chevron-down" id="chips-chevron" class="u-icon-14 u-opacity-05"></i>
+                        </div>
+                        <div class="ai-chips-content hidden u-mt-05" id="chips-content">
+                            <div class="ai-chips">
+                                <button class="ai-chip-btn" data-query="objeciones"><i data-lucide="shield-off"></i> Objeciones</button>
+                                <button class="ai-chip-btn" data-query="sector"><i data-lucide="briefcase"></i> Por Sector</button>
+                                <button class="ai-chip-btn" data-query="normativa"><i data-lucide="scale"></i> Normativa</button>
+                                <button class="ai-chip-btn" data-query="competencia"><i data-lucide="users"></i> Competencia</button>
+                                <button class="ai-chip-btn" data-query="whatsapp"><i data-lucide="message-circle"></i> Texto WhatsApp</button>
+                                <button class="ai-chip-btn" data-query="cierre"><i data-lucide="check-square"></i> Técnicas Cierre</button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="ai-input-area">
+                        <button id="ai-mic-btn" class="btn btn-secondary mic-btn" aria-label="Dictar por voz" title="Dictar pregunta por voz"><i data-lucide="mic"></i></button>
                         <input type="text" id="ai-input" placeholder="Pregunta algo al agente..." autocomplete="off">
                         <button id="ai-send-btn" class="btn btn-primary" aria-label="Enviar mensaje"><i data-lucide="send"></i></button>
                     </div>
